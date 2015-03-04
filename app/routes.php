@@ -24,6 +24,9 @@ Route::group(['namespace' => 'admin'], function(){
     Route::group(['prefix' => 'master', 'namespace' => 'master'], function()
     {
       Route::resource('users', 'Users');
+      Route::resource('cars', 'Cars');
+      Route::resource('routes', 'Routes');
+      Route::resource('schedules', 'Schedules');
     });
   });
 

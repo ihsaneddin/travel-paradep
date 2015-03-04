@@ -8,10 +8,6 @@ use \Schema;
 
 trait Validator
 {
-	function isValid()
-	{
-		return $this->validate();
-	}
 
 	function validate()
 	{
@@ -24,7 +20,7 @@ trait Validator
         }
 	}
 
-	function validator()
+	protected function validator()
 	{
 		if (! $this->validator instanceof customValidator)
 		{

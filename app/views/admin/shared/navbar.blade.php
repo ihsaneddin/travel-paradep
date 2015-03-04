@@ -102,7 +102,7 @@
 					</a>
 					<ul class="dropdown-menu reveal" style="width:200px">
 						<li>
-							{{ Helpers::link_to('admin.profiles.edit', '<i class="icon icon-user"></i>Edit Profile', ['profiles' => Confide::user()->id],['class' => 'new-record-modal']) }}
+							{{ Helpers::link_to('admin.profiles.edit', '<i class="icon icon-user"></i> Edit Profile', ['profiles' => Confide::user()->id],['class' => 'new-record-modal']) }}
 						</li>
 						<li><a href="dashboard.html#"><i class="icon-cogs"></i> Settings</a></li>
 						<li><a href="pages/faq.html"><i class="icon-info-sign"></i> Help</a></li>

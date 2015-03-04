@@ -12,7 +12,8 @@ class Base extends Eloquent implements NestedAttributesInterface,ValidatorInterf
  	use Validator;
 
  	protected $validator;
- 	protected $rules;
- 	protected $messages;
+ 	protected $rules = array();
+ 	protected $messages = array();
+ 	public $childs = array();
 
 }

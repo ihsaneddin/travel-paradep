@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Support\MessageBag;
 
 class Helpers {
 	
@@ -10,9 +11,9 @@ class Helpers {
 	public static function avatar()
 	{
 		$avatar = asset('assets/img/avatar-default.png');
-		if (Confide::user()->avatar)
+		if ( ! empty(Confide::user()->avatar) )
 		{
-			$avatar = Confide::user()->avatar->image->url('thumb');  
+			$avatar = Confide::user()->avatar()->image->url('thumb');  
 		}
 		return $avatar;
 	}
@@ -61,7 +62,21 @@ class Helpers {
 
 	static function inputError($errors,$property)
 	{
-		if ($errors->has($property)) return 'has-error';
+		if ( self::isMessageBag($errors) )
+		{
+			if ($errors->has($property)) return 'has-error';
+		}
+	}
+
+	static function errorMessage($errors, $property)
+	{	
+		if ( self::isMessageBag($errors) ) $errors->first($property);
+
+	}
+	
+	static function isMessageBag($errors)
+	{
+		if ( $errors instanceOf MessageBag ) return true;
 	}
 
 	static function createOrUpdateRoute($obj,array $route= array())
@@ -76,9 +91,10 @@ class Helpers {
 		return $route;
 	}	
 
-	static function nestedId()
+	static function createOrUpdateMethod($object)
 	{
-		
+		$method = $object->exists() ? 'put' : 'post';
+		return $method;
 	}
 
 }

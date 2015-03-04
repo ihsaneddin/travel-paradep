@@ -53,19 +53,6 @@
     </div>
 </div>
 
- <div class="form-group {{Helpers::inputError($errors, 'avatar[][name]')}}">
-    {{Form::label('profile picture', 'Profile Picture',
-                  ['class' => 'col-md-2 control-label']) }}
-    <div class="col-md-10">
-        {{ Form::email('avatar[][name]',
-                        '',
-                        ['class' => 'form-control', 'placeholder' => 'User email'] )}}
-        <span class="help-inline">
-        {{ $errors->first('avatar[][name]') }}             
-        </span>
-    </div>
-  </div>
-
 <div class="form-group {{Helpers::inputError($errors, 'role_ids')}}">
     {{Form::label('role_ids',
                   'Roles', 

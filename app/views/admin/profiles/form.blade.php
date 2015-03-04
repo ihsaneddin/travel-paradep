@@ -1,6 +1,6 @@
 {{Form::model($user, ['route' => Helpers::createOrUpdateRoute($user), 
              'class' => 'form-and-autocomplete form form-horizontal',
-              'id' => 'user-form'])}}
+              'id' => 'user-form', 'method' => 'put'])}}
 
 <div class="form-group {{Helpers::inputError($errors, 'username')}}">
     {{Form::label('username',
@@ -17,19 +17,21 @@
     </div>
 </div>
 
-<div class="fields-for fields-for-avatar">  
-  <div class="form-group {{Helpers::inputError($errors, 'avatar[][name]')}}">
-    {{Form::label('profile picture', 'Email',
+<div class="fields-for fields-for-avatar">
+  @foreach( $user->childs['avatar'] as $avatar )   
+  <div class="form-group {{Helpers::inputError($errors, 'avatar[0][name]')}}">
+    {{Form::label('profile picture', 'Avatar',
                   ['class' => 'col-md-2 control-label']) }}
     <div class="col-md-10">
-        {{ Form::email('avatar[][description]',
+        {{ Form::email('avatar[0][name]',
                         '',
                         ['class' => 'form-control', 'placeholder' => 'User email'] )}}
         <span class="help-inline">
-        {{ $errors->first('avatar[][name]') }}             
+        {{ Helpers::errorMessage($errors, 'avatar[0][name]') }}             
         </span>
     </div>
   </div>
+  @endforeach
 </div>
 
 {{Form::close()}}

@@ -149,7 +149,7 @@ function submitModalForm(submit)
 					if (response.hasOwnProperty($(this).attr('name')))
 					{
 						$(this).parents('div.form-group').addClass('has-error');
-						$(this).parents('div.form-group').find('span.help-inline').text(response[$(this).attr('id')]);
+						$(this).parents('div.form-group').find('span.help-inline').text(response[$(this).attr('name')]);
 					} 
 				});
 			}

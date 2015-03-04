@@ -40,7 +40,15 @@
                             <li>
                                 {{Helpers::link_to('admin.master.users.index', '<i class="icon-user icon"></i> <span>Users</span>', [], [])}}
                             </li>
-                            <li><a href="{{url('demo/dashboard-control-panel')}}"><i class="icon-circle-blank icon"></i> <span>Control Panel</span></a></li>
+                            <li>
+                                {{Helpers::link_to('admin.master.cars.index', '<i class="icon-circle-blank icon"></i> <span>Cars</span>', [], [])}}
+                            </li>
+                            <li>                            <li>
+                                {{Helpers::link_to('admin.master.schedules.index', '<i class="icon-list icon"></i> <span>Schedules</span>', [], [])}}
+                            </li>
+                            <li>                            <li>
+                                {{Helpers::link_to('admin.master.routes.index', '<i class="icon-tasks icon"></i> <span>Routes</span>', [], [])}}
+                            </li>
                             <li><a href="{{url('demo/dashboard-notification')}}"><i class="icon-circle-blank icon"></i> <span>Notification</span></a></li>
                         </ul>
                     </div>

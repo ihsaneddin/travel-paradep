@@ -2,6 +2,9 @@
 
 namespace admin;
 
+use \Input;
+use \View;
+
 class Profiles extends Admin {
 
 	protected $resource;
@@ -32,6 +35,7 @@ class Profiles extends Admin {
 	 */
 	public function edit($id)
 	{
+		$this->resource->childs['avatar'][0] = new \Attachment; 
 		return  $this->respondTo(
 			array('html'=> function()
 				 			{
@@ -39,8 +43,8 @@ class Profiles extends Admin {
 				 			},
 				  'js' => function()
 				  		  {
-				  		  	 $form = \View::make($this->form, array('user' => $this->resource))->render(); 
-				  		  	 return \View::make('admin.shared.modal', array('body' => $form))->render();
+				  		  	 $form = View::make($this->form, array('user' => $this->resource))->render(); 
+				  		  	 return View::make('admin.shared.modal', array('body' => $form))->render();
 				  		  }
 				 )
 		);
@@ -55,7 +59,38 @@ class Profiles extends Admin {
 	 */
 	public function update($id)
 	{
-		//
+		if ($this->resource->store(Input::all())) {
+	        return $this->respondTo(
+	        	array(
+	        		'html' => function()
+	        				  {
+	        				  	return Redirect::route('admin.profiles.show', ['users' => $this->resource->id])
+	            				->with('notice', 'Profile updated');
+	        				  }, 
+	        		'js' => function()
+	        				{
+	        					return $this->resource;
+	        				}
+	        		)
+	        	);
+	     }
+	    else {
+	    	return $this->respondTo(
+	    		array(
+	    			'html' => function()
+	    					  {
+	    					  	return Redirect::action('admin\master\Users@create', ['user' => $this->resource])
+			                ->withInput(Input::except('password'))
+			                ->withErrors($this->resource->errors());
+	    					  },
+	    			'js' => function()
+	        			{
+	        				return $this->resource->errors();	
+	        			},
+	        	'status' => 422
+	    			)
+	    		);
+	    } 
 	}
 
 

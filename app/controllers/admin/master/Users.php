@@ -1,5 +1,14 @@
 <?php
 namespace admin\master;
+use admin\Admin;
+use \Table;
+use \View;
+use \Response;
+use \User;
+use \Input;
+use \Redirect;
+use \App;
+use \Session;
 
 class Users extends Admin {
 
@@ -48,7 +57,6 @@ class Users extends Admin {
 	 */
 	public function store()
 	{
-		$this->resource->nestSaves(Input::all());
 		$repo = App::make('UserRepository');
 	    $user = $repo->signup(Input::all());
 	    if ($user->id) {
