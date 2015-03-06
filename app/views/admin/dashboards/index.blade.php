@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 
 @section('style-head')
+    @parent
     {{HTML::style('assets/plugins/bootstrap.datepicker/css/datepicker.css')}}
 @stop
 

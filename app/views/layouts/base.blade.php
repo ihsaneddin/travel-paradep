@@ -18,7 +18,6 @@
         <link href="{{asset('assets/css/font-awesome.css')}}" rel="stylesheet">
         <link href="{{asset('assets/css/bootstrap.css')}}" rel="stylesheet">
         <link href="{{asset('assets/css/atoz.css')}}" rel="stylesheet">
-
         @yield('style-head')
 
         <!--[if lt IE 9]>

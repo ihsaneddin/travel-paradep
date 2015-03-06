@@ -4,12 +4,23 @@ use \App;
 use exception\NestException;
 use \DB;
 use Illuminate\Support\MessageBag;
+use Illuminate\Database\Eloquent\Collection;
 
 trait NestedAttributes
 {
 	protected $nestTree = array();
 	protected $relationTree = array();
 	protected $position=0;
+
+	//for many relationship
+	public function build($relation)
+	{
+		$child = App::make($this->childClass($relation));
+		if  ( $this->$relation instanceof Collection)
+		{
+			$this->$relation->push($child);
+		}
+	}
 
 	public function store(array $data=array())
 	{
@@ -33,17 +44,15 @@ trait NestedAttributes
 		}
 	}
 
+	//todo : remove root when recursing 
 	protected function nestByNest(array $data=array(), $parent=null, $root=null, $relation=null, $previousTree = array())
 	{
 		if(!empty($data))
 		{
 			$this->updateRelationTree($previousTree, $relation);
 			$this->setAttributes($data, $parent, $relation);
-			if ( $this->validate() )
-			{
-				is_null($parent) || is_null($relation) ? $this->save() : $parent->$relation()->save($this);
-			}
-			else $this->attachErrors($root);
+			is_null($parent) || is_null($relation) ? $this->save() : $parent->$relation()->save($this);
+			$this->attachErrors($root);
 			if (property_exists($this, 'acceptNestedAttributes'))
 			{
 				foreach ($this->acceptNestedAttributes as $relation => $attributes) {
@@ -51,9 +60,8 @@ trait NestedAttributes
 					{
 						foreach ($data[$relation] as $index => $childAttributes) 
 						{
-							$child = $this->setChildObject($relation, $attributes);
-							$child->position = $index;
-							$this->addChild($relation, $child);
+							$child = $this->setChild($relation, $attributes);
+							$child->position = $index;	
 							$child->nestByNest($childAttributes, $this, is_null($root) ? $this : $root, $relation, $this->relationTree );
 						}
 					}
@@ -63,11 +71,24 @@ trait NestedAttributes
 		}
 	}
 
+	protected function setChild($relation, $id, $zero=0)
+	{ 
+		$child = App::make($this->childClass($relation))->firstOrNew([ $this->childPrimaryKey($relation) => $id]);
+		
+		if ( $this->$relation instanceof Collection )
+		{
+			$this->$relation->push( $child);
+		}
+		else{
+			$this->relations[$relation] = $child;
+		}
+		return $child;
+	}
+
 	protected function attachErrors($root)
 	{
 		if ( !is_null($root) && !is_null($this->errors) )
 		{
-			$root->isMessageBag();
 			$messageBag = $root->errors;
 			foreach ($this->errors->toArray() as $attribute => $messages) {
 				foreach ($messages as $message) {
@@ -90,9 +111,9 @@ trait NestedAttributes
 		if ( ! is_null($relation) ) array_push($this->relationTree, $relation.'['.$this->position.']');
 	}
 
-	public function hasChilds()
+	public function hasChilds($relation)
 	{
-		return !empty($this->childs);
+		return !($this->$relation->isEmpty());
 	}
 
 	protected function isMessageBag()
@@ -104,18 +125,9 @@ trait NestedAttributes
 		return true;
 	}
 
-	protected function addChild($relation, $child)
-	{
-		if ( ! array_key_exists($relation, $this->childs) )
-		{
-			$this->childs[$relation] = array();				
-		}
-		$this->childs[$relation] = array_add($this->childs[$relation], $child->position, $child); 
-	}
-
 	protected function setAttributes($data, $parent, $relation=null)
 	{
-		$fillable = is_null($relation) && property_exists(is_null($parent) ? $this : $parent, 'acceptNestedAttributes') ? $this->fillable : $parent->acceptNestedAttributes[$relation]; 
+		$fillable = is_null($relation) && property_exists(is_null($parent) ? $this : $parent, 'acceptNestedAttributes') ? $parent->acceptNestedAttributes[$relation] : $this->fillable; 
 		foreach ($data as $key => $value) {
 			if (!in_array($key, $fillable))
 			{
@@ -123,12 +135,6 @@ trait NestedAttributes
 			}
 		}
 		$this->fill($data); 
-	}
-
-
-	protected function setChildObject($relation, $id, $zero=0)
-	{ 
-		return App::make($this->childClass($relation))->firstOrNew([ $this->childPrimaryKey($relation) => $id]);
 	}
 
 	protected function childPrimaryKey($relation)
@@ -140,30 +146,6 @@ trait NestedAttributes
 	protected function childClass($relation)
 	{
 		return class_basename(get_class($this->$relation()->getRelated()));
-	}
-
-	//used for attaching childs errors to root
-	protected function attachErrorsChilds($root = null)
-	{
-		if ( $this->hasChilds() )
-		{
-			$root = is_null($root) ? $this : $root;
-			$messageBag = $root->errors;
-			foreach ($this->childs as $relation => $childs) {
-				foreach ($childs as $index => $child) {
-					if ( !is_null($child->errors) )
-					{
-						foreach ($child->errors->toArray() as $attribute => $messages) {
-							$child->attachErrors($root);
-							foreach ($messages as $message) {
-								$messageBag->add(''.$child->positionBase().''.$attribute.'', $message);	
-							}
-							$root->errors = $messageBag;
-						}
-					}
-				}
-			}
-		}
 	}
 
 }

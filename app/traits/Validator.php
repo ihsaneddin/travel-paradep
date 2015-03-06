@@ -9,10 +9,10 @@ use \Schema;
 trait Validator
 {
 
-	function validate()
+	function validate($input=array())
 	{
 		try {
-            $validate = $this->validator()->validate( $this->getAttributesArray(), $this->rules, $this->messages );
+            $validate = $this->validator()->validate( empty($input) ? $this->getAttributesArray() : $input, $this->rules, $this->messages );
  			return true;
         } catch ( ValidationException $exception ) {
             $this->errors = $exception->getErrors();

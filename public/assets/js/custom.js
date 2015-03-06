@@ -14,7 +14,7 @@ jQuery(document).ajaxStart(function (request)
 		$('body #modal-confirmation').modal('hide');
 		loading({'show' : false});
 	}).ajaxError(function(){
-		notify({ 'type' : 'error', 'title' : 'Error', 'message' : 'Your request can not be processed right now.', 'timeout' : 0 });
+		notify({ 'type' : 'error', 'title' : 'Error', 'message' : 'Your request can not be processed right now.', 'timeout' : 5 });
 	});
 
 function deleteRowRecord(event,element)
@@ -131,15 +131,21 @@ function initAutocomplete(element)
 
 function submitModalForm(submit)
 {
-	var form = $('#modal-admin form'+$(submit).attr('data-target'));
-	var method = form.attr('method');
-	var url = form.attr('action');
-	var data = form.serialize();
+	var modal = $(submit).parents('.modal'),
+		form = modal.find('form#'+$(submit).attr('data-target')),
+	 	method = form.attr('method'),
+	 	url = form.attr('action'),
+	 	process = false,
+	 	content = false,
+	 	data = data = new FormData(form[0]);;
+
 	$.ajax({
 		dataType: 'json',
 		url: url,
 		type: method,
 		data: data,
+		processData: process,
+    	contentType: content,
 		error:function(request)
 		{
 			if (request.status == 422)
@@ -155,46 +161,107 @@ function submitModalForm(submit)
 			}
 			else
 			{
-				$('#modal #modal-admin').modal('hide');
+				modal.modal('hide');
 			}
 		},
 		success:function(request)
 		{
-	      var table = $('#table-result').dataTable();
-	      table.fnClearTable( 0 );
-	      table.fnDraw();
-	      $('#modal-admin').modal('hide');
-	      $('#modal-admin').removeClass('filled');
-	      notify({ 'type' : 'success', 'title' : 'Success', 'message' : 'Record is succesfuly created.', 'timeout' : 10 });
+	      if ($('#table-result').length && form.hasClass('update-data-table'))
+	      {
+	      	 reloadDataTable($('#table-result'));
+	      }
+
+	      if (  modal.attr('id').toLowerCase() === 'modal-edit-profile')
+	      {
+	      	changeAvatar(request);
+	      }
+
+	      clearPasswordFields(form);
+	      clearErrorsValidation(form);
+
+	      notify({ 'type' : 'success', 'title' : 'Success', 'message' : modal.find('span.notify-success-text').text(), 'timeout' : 5 });
+    	  modal.modal('hide');
     	}
 	});
 }
 
-function appendNewRecordToTable(record)
+function reloadDataTable(table)
 {
-  var table = $('div.table-responsive');
-  var displayRow = parseInt($('#table-result_length').find('select').val());
-  if (table.length)
-  {
-      var rowCount = table.find('tbody > tr').length;
-      var newRowData = newRowData(table.attr('id'), record);
-      var td = '';
-      newRowData.each(function(row){
-        
-      });  
-  }
-
+	if (table.hasClass('dataTable'))
+	{
+		table.dataTable();
+		table.fnClearTable( 0 );
+  		table.fnDraw();		
+	}
 }
 
-function newRowData(type,record)
+function changeAvatar(user)
 {
-  var row = {};
-  switch(type)
-  {
-    case 'users-table':
-        row = { 'username' : record['username'], 'email' : record['email'], 'roles' : 'roles', 'last_login' : record['last_login'], 'action' : actionColumn(type,record) }
-  }
-  return row;
+	var avatar = $('nav').find('#current-user-avatar');
+	var url = user.avatar_url;
+	if (avatar.length)
+	{
+		avatar.attr('src', url);
+		avatar.parents('a.dropdown-toggle').find('span').text(user.username);
+	}
+}
+
+function initializeFileInput(input,options)
+{
+  input.fileinput(
+  	options
+  );
+}
+
+function newModalForm(event,element)
+{
+	var url = $(element).attr('href'),
+	targetModal = $(element).attr('data-target'),
+	currentModal;
+
+	if ( !$('#modal').find('div#'+targetModal).length )
+	{
+		$.ajax({
+			dataType: 'json',
+			url: url,
+			type: 'get',
+			success: function(request)
+			{
+				$('#modal').append(request);
+				currentModal = $('#modal .modal').last();
+				currentModal.attr('id', targetModal);
+
+				//check if form's inputs has token-autocomplete class
+				currentModal.find('.token-autocomplete').each(function(){
+					initAutocomplete($(this));
+				});
+				
+				//add target attr to submit button
+				currentModal.find('.submit-modal-form').attr('data-target', ''+currentModal.find('form').attr('id'));
+				currentModal.modal('show');
+			}
+		});
+	}else
+	{
+		$('#modal div#'+targetModal).modal('show');
+	}
+	event.preventDefault();
+	return false;
+}
+
+function clearPasswordFields(form)
+{
+  form.find('input[type=password]').each(function(){
+  	 $(this).val(''); 
+  });
+}
+
+function clearErrorsValidation(form)
+{
+	form.find('div.form-group').each(function(){
+		$(this).find('.help-inline').text('');
+		$(this).hasClass('has-error') ? $(this).removeClass('has-error') : $(this);
+	});
 }
 
 //all event listeners are declared here
@@ -253,36 +320,9 @@ $(document).ready(function(event){
 
 	});
 
-	$('.new-record-modal').click(function(e)
+	$('.new-modal-form').click(function(e)
 	{
-		var url = $(this).attr('href');
-		if (!$('#modal-admin').hasClass('filled'))
-		{
-			$.ajax({
-				dataType: 'json',
-				url: url,
-				type: 'get',
-				success: function(request)
-				{
-					$('#modal').html(request);
-					//check if form's inputs has token-autocomplete class
-					$('#modal-admin form').find('.token-autocomplete').each(function(){
-						initAutocomplete($(this));
-					});
-					
-					//add class flag to modal
-					$('#modal-admin').addClass('filled');
-					//add target attr to submit button
-					$('#modal-admin .submit-modal-form').attr('data-target', '#'+$('#modal-admin form').attr('id'));
-					$('#modal-admin').modal('show');
-				}
-			});
-		}else
-		{
-			$('#modal-admin').modal('show');
-		}
-		e.preventDefault();
-		return false;
+		newModalForm(e,this);	
 	});
 });
 

@@ -2,10 +2,23 @@
 
 use Zizaco\Confide\ConfideUser;
 use Zizaco\Confide\ConfideUserInterface;
+use Codesleeve\Stapler\ORM\StaplerableInterface;
+use Codesleeve\Stapler\ORM\EloquentTrait;
+use traits\NestedAttributes;
+use traits\Validator;
+use interfaces\NestedAttributesInterface;
+use interfaces\ValidatorInterface;
+use observers\UserObserver;
+use Illuminate\Events\Dispatcher;
+use interfaces\ChangePasswordInterface;
+use traits\ChangePassword;
 
-class User extends Base implements ConfideUserInterface {
-
+class User extends Eloquent implements ConfideUserInterface, StaplerableInterface, NestedAttributesInterface, ValidatorInterface, ChangePasswordInterface{
 	use ConfideUser;
+	use EloquentTrait;
+	use Validator;
+	use NestedAttributes;
+	use ChangePassword;
 
 	/**
 	 * The database table used by the model.
@@ -13,8 +26,11 @@ class User extends Base implements ConfideUserInterface {
 	 * @var string
 	 */
 	protected $table = 'users';
-	protected $fillable = ['username','email', 'password', 'password_confirmation']; 
-	protected $acceptNestedAttributes = ['avatar' => ['id', 'name', 'description', 'image', '_delete']];
+	protected $fillable = ['username','email', 'avatar']; 
+	protected $validator;
+	protected $rules = array();
+ 	protected $messages = array();
+ 	protected $appends = ['avatar_url'];
 	/**
 	 * The attributes excluded from the model's JSON form.
 	 *
@@ -22,14 +38,21 @@ class User extends Base implements ConfideUserInterface {
 	 */
 	protected $hidden = array('password', 'remember_token');
 
+	public function __construct(array $attributes =array())
+	{
+		$this->hasAttachedFile('avatar', [
+			'styles' => [
+				'medium' => '300x300',
+				'thumb' => '100x100'
+			]
+		]);
+		$this->isMessageBag();
+		parent::__construct($attributes);
+	}
+
 	public function roles()
 	{
 		return $this->belongsToMany('Role', 'users_roles');
-	}
-
-	public function avatar()
-	{
-		return $this->hasOne('Attachment');
 	}
 
 	public function addRole($name)
@@ -60,12 +83,10 @@ class User extends Base implements ConfideUserInterface {
 				if  (!is_null($filter['name']))
 			{
 				array_push($query, 'Lower(username) like "%'.$filter['name'].'%"');
-				//$res = $res->whereRaw("Lower(name) like  '%?%'", $filter['name']);
 			}
 			else if (!is_null($filter['email']))
 			{
 				array_push($query, 'Lower(email) like "%'.$filter['email'].'%"');
-				//$res = $res->whereRaw('Lower(email) like "%?%"', $filter['email']);
 			}
 			$res = $res->whereRaw(implode(' and ', $query));
 		}
@@ -99,7 +120,7 @@ class User extends Base implements ConfideUserInterface {
 	        })
 	        ->addColumn('action', function($user){
 	        	$str = '<div class="btn-group action">
-                    		<a href="'.route('admin.master.users.edit', ['users' => $user->id]).'" class="btn btn-default btn-xs"><i class="icon icon-pencil"></i></a>
+                    		<a href="'.route('admin.master.users.edit', ['users' => $user->id]).'" class="btn btn-default btn-xs new-modal-form"  data-target="modal-edit-user-'.$user->id.'" onclick="newModalForm(event,this)"><i class="icon icon-pencil"></i></a>
                     		<a id = "delete-record-'.$user->id.'" href="'.route('admin.master.users.destroy', ['users' => $user->id]).'" class="btn btn-default btn-delete btn-xs delete-table-record" onclick="deleteRowRecord(event,this);" data-method="delete"><i class="icon icon-trash"></i></a>
                 		</div>';
                 return $str;
@@ -138,5 +159,11 @@ class User extends Base implements ConfideUserInterface {
 		}
 		return implode(' ,', $names);
 	}
+
+	public function getAvatarUrlAttribute($value)
+	{
+		return is_null($this->avatar_file_name) ? asset('assets/img/avatar-default.png') : asset($this->avatar->url());
+	}
+
 
 }

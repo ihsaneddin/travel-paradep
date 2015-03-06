@@ -21,6 +21,9 @@ Route::group(['namespace' => 'admin'], function(){
   {
     Route::resource('dashboards','Dashboards', ['only' => ['index']]);
     Route::resource('profiles', 'Profiles', ['only' => ['show', 'edit', 'update']]);
+    Route::get('profiles/{profiles}/new_password', array('as' => 'admin.profiles.new_password', 'uses' => 'Profiles@new_password'));
+    Route::put('profiles/{profiles}/change_password', array('as' => 'admin.profiles.change_password', 'uses' => 'Profiles@change_password'));
+
     Route::group(['prefix' => 'master', 'namespace' => 'master'], function()
     {
       Route::resource('users', 'Users');

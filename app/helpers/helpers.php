@@ -11,9 +11,9 @@ class Helpers {
 	public static function avatar()
 	{
 		$avatar = asset('assets/img/avatar-default.png');
-		if ( ! empty(Confide::user()->avatar) )
+		if ( ! is_null(Confide::user()->avatar ) )
 		{
-			$avatar = Confide::user()->avatar()->image->url('thumb');  
+			$avatar = asset(Confide::user()->avatar->url());  
 		}
 		return $avatar;
 	}

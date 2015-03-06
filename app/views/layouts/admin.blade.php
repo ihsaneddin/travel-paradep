@@ -7,6 +7,7 @@
     <link href="{{asset('assets/plugins/jquery.token-input/css/token-input.css')}}" rel="stylesheet">
     <link href="{{asset('assets/plugins/jquery.token-input/css/token-input-facebook.css')}}" rel="stylesheet">
     <link href="{{asset('assets/css/custom.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/plugins/kartik-v-bootstrap-fileinput/css/fileinput.css')}}" rel="stylesheet">
 @stop
 
 @section('body')
@@ -64,6 +65,8 @@
     <script src="{{asset('assets/js/sidebar.js')}}"></script>
 
     <script type="text/javascript" src="{{asset('assets/plugins/jquery.token-input/js/jquery.tokeninput.js')}}"></script>
+
+    <script type="text/javascript" src="{{asset('assets/plugins/kartik-v-bootstrap-fileinput/js/fileinput.min.js')}}"></script>
 
     <script src="{{asset('assets/js/custom.js')}}"></script>
     <script>

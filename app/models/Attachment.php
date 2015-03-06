@@ -9,6 +9,7 @@ class Attachment extends Base implements StaplerableInterface{
 	protected $fillable = ['name', 'description', 'image' ];
 	protected $rules = ['name' => array( 'required', 'alpha_dash', 'max:200' )];
 	protected $messages =array();
+	public $errors;
 
 	public function __construct(array $attributes =array())
 	{

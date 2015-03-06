@@ -96,15 +96,17 @@
 				</li>
 				<li class="dropdown">
 					<a href="dashboard.html#" class="dropdown-toggle" data-toggle="dropdown">
-						<img src="{{ Helpers::avatar() }}" width="30px" alt="" class="avatar img-circle">
-						{{ Confide::user()->username }}
+						<img id='current-user-avatar' src="{{ Helpers::avatar() }}" width="30px" alt="" class="avatar img-circle">
+						<span>{{ Confide::user()->username }}</span>
 						<i class="icon-caret-down"></i>
 					</a>
 					<ul class="dropdown-menu reveal" style="width:200px">
 						<li>
-							{{ Helpers::link_to('admin.profiles.edit', '<i class="icon icon-user"></i> Edit Profile', ['profiles' => Confide::user()->id],['class' => 'new-record-modal']) }}
+							{{ Helpers::link_to('admin.profiles.edit', '<i class="icon icon-user"></i> Edit Profile', ['profiles' => Confide::user()->id],['class' => 'new-modal-form', 'data-target' => 'modal-edit-profile']) }}
 						</li>
-						<li><a href="dashboard.html#"><i class="icon-cogs"></i> Settings</a></li>
+						<li>
+							{{ Helpers::link_to('admin.profiles.new_password', '<i class="icon icon-lock"></i> Edit Password', ['profiles' => Confide::user()->id],['class' => 'new-modal-form', 'data-target' => 'modal-edit-password']) }}
+						</li>
 						<li><a href="pages/faq.html"><i class="icon-info-sign"></i> Help</a></li>
 						<li class="divider"></li>
 						<li><a href="{{ route('admin.sessions.destroy') }}"><i class="icon-off"></i> Log Out</a></li>

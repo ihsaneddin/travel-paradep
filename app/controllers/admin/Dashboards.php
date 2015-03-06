@@ -1,5 +1,6 @@
 <?php
 namespace admin;
+use \View;
 
 class Dashboards extends Admin {
 
@@ -10,12 +11,7 @@ class Dashboards extends Admin {
 	 */
 	public function index()
 	{
-		$att = new \Attachment;
-		$att->fill(['description' => 'dasdssa']);
-		$att->validate();
-		//dd( $att->getAttributesArray());
-
-		return \View::make($this->view());
+		return View::make($this->view());
 	}
 
 

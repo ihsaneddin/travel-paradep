@@ -10,6 +10,7 @@ use \Table;
 use \Redirect;
 use \App;
 use \Session;
+use \Confide;
 
 class Admin extends \BaseController {
 
@@ -24,11 +25,13 @@ class Admin extends \BaseController {
 	protected $resource;
 	protected $status = 401;
 	protected $errors;
+	protected $model;
 
 	public function __construct()
 	{
 		$currentUrl = Request::url();
 		View::share('currentUrl', $currentUrl);
+		View::share('currentUser', Confide::user());
 		$this->view = Route::current()->getName();
 		$this->resource = $this->resource();
 	}
@@ -42,9 +45,9 @@ class Admin extends \BaseController {
 		}
 	}
 
-	protected function resource($resource=null)
+	protected function resource()
 	{
-		$resource = is_null($resource) ? str_singular(class_basename(get_class($this))) : $resource;
+		$resource = is_null($this->model) ? str_singular(class_basename(get_class($this))) : $this->model;
 		if (class_exists($resource))
 		{
 			$resourceId = Route::current()->getParameter(strtolower(class_basename(get_class($this))));
