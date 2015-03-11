@@ -62,10 +62,10 @@ class Helpers {
 
 	static function inputError($errors,$property)
 	{
-		if ( self::isMessageBag($errors) )
-		{
+		//if ( self::isMessageBag($errors) )
+		//{
 			if ($errors->has($property)) return 'has-error';
-		}
+		//}
 	}
 
 	static function errorMessage($errors, $property)
@@ -93,8 +93,22 @@ class Helpers {
 
 	static function createOrUpdateMethod($object)
 	{
-		$method = $object->exists() ? 'put' : 'post';
+		$method = $object->id ? 'put' : 'post';
 		return $method;
+	}
+
+	static function carClassList($categories)
+	{
+		$list = array();
+		foreach ($categories as $category) {
+			$list = array_add($list, $category->id, ucfirst($category->name));
+		}
+		return $list;
+	}
+
+	static function showOrHidden($condition)
+	{
+		if (empty($condition)) return 'hidden';
 	}
 
 }

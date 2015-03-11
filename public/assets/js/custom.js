@@ -151,13 +151,10 @@ function submitModalForm(submit)
 			if (request.status == 422)
 			{
 				var response = request.responseJSON;
-				form.find('input').each(function(e){
-					if (response.hasOwnProperty($(this).attr('name')))
-					{
-						$(this).parents('div.form-group').addClass('has-error');
-						$(this).parents('div.form-group').find('span.help-inline').text(response[$(this).attr('name')]);
-					} 
-				});
+				//append validation input
+				removeError(form);
+				appendError(form, 'input', response);
+				appendError(form, 'select', response);
 			}
 			else
 			{
@@ -176,12 +173,35 @@ function submitModalForm(submit)
 	      	changeAvatar(request);
 	      }
 
+	      if (modal.hasClass('new-object'))
+	      {
+	      	modal.find('input').val('');
+	      	modal.find('select').val('');
+	      }
+
 	      clearPasswordFields(form);
 	      clearErrorsValidation(form);
 
 	      notify({ 'type' : 'success', 'title' : 'Success', 'message' : modal.find('span.notify-success-text').text(), 'timeout' : 5 });
     	  modal.modal('hide');
     	}
+	});
+}
+
+function removeError(form)
+{
+	form.find('div.form-group').removeClass('has-error');
+	form.find('span.help-inline').text('');
+}
+
+function appendError(form,input_type,response)
+{
+	form.find(input_type).each(function(){
+		if (response.hasOwnProperty($(this).attr('name')))
+		{
+			$(this).parents('div.form-group').addClass('has-error');
+			$(this).parents('div.form-group').find('span.help-inline').text(response[$(this).attr('name')]);
+		}
 	});
 }
 
@@ -216,8 +236,9 @@ function initializeFileInput(input,options)
 function newModalForm(event,element)
 {
 	var url = $(element).attr('href'),
-	targetModal = $(element).attr('data-target'),
-	currentModal;
+		targetModal = $(element).attr('data-target'),
+		currentModal,
+		newForm = $(element).hasClass('new-object') ? true : false;
 
 	if ( !$('#modal').find('div#'+targetModal).length )
 	{
@@ -238,6 +259,7 @@ function newModalForm(event,element)
 				
 				//add target attr to submit button
 				currentModal.find('.submit-modal-form').attr('data-target', ''+currentModal.find('form').attr('id'));
+				if (newForm) currentModal.addClass('new-object');
 				currentModal.modal('show');
 			}
 		});
@@ -262,6 +284,27 @@ function clearErrorsValidation(form)
 		$(this).find('.help-inline').text('');
 		$(this).hasClass('has-error') ? $(this).removeClass('has-error') : $(this);
 	});
+}
+
+function initSelectize(element, options )
+{
+	element.selectize(options);	
+}
+
+function provideManufacture(form, car)
+{
+	car = car[0].selectize;      
+  	car.on('item_add', function(value){
+        var currentOption = car.getOption(value);
+        if ( !currentOption.parents('div.optgroup').length )
+        {
+            form.find('.manufacture-input').removeClass('hidden'); 
+        }
+        else
+        {
+            form.find('.manufacture-input').addClass('hidden');
+        }
+  	});
 }
 
 //all event listeners are declared here

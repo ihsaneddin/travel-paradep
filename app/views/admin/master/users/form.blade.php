@@ -1,7 +1,7 @@
 
 {{Form::model($user, ['route' => Helpers::createOrUpdateRoute($user), 
              'class' => 'form-and-autocomplete form form-horizontal update-data-table',
-              'id' => 'user-form'])}}
+              'id' => 'user-form', 'method' => Helpers::createOrUpdateMethod($user)])}}
 
     <div class="form-group {{Helpers::inputError($errors, 'username')}}">
         {{Form::label('username',

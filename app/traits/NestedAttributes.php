@@ -38,7 +38,7 @@ trait NestedAttributes
 	protected function performSaveNest(array $data = array())
 	{
 		$this->nestByNest($data);
-		if ( $this->errors->any() ) 
+		if ( ($this->errors instanceof MessageBag) ? $this->errors->any() : !is_null($this->errors) ) 
 		{
 			throw new NestException;
 		}
@@ -51,8 +51,8 @@ trait NestedAttributes
 		{
 			$this->updateRelationTree($previousTree, $relation);
 			$this->setAttributes($data, $parent, $relation);
-			is_null($parent) || is_null($relation) ? $this->save() : $parent->$relation()->save($this);
-			$this->attachErrors($root);
+			if ($this->validate()) (is_null($parent) || is_null($relation)) ? $this->save() : $parent->$relation()->save($this);			
+			else $this->attachErrors($root);
 			if (property_exists($this, 'acceptNestedAttributes'))
 			{
 				foreach ($this->acceptNestedAttributes as $relation => $attributes) {
@@ -89,6 +89,7 @@ trait NestedAttributes
 	{
 		if ( !is_null($root) && !is_null($this->errors) )
 		{
+			$root->isMessageBag();
 			$messageBag = $root->errors;
 			foreach ($this->errors->toArray() as $attribute => $messages) {
 				foreach ($messages as $message) {
@@ -98,6 +99,13 @@ trait NestedAttributes
 			}
 		}
 
+	}
+
+	protected function attachError($key,$message)
+	{
+		$this->isMessageBag();
+		$messageBag = $this->errors;
+		$messageBag->add($key,$message);
 	}
 
 	protected function positionBase()
@@ -116,18 +124,10 @@ trait NestedAttributes
 		return !($this->$relation->isEmpty());
 	}
 
-	protected function isMessageBag()
-	{
-		if ( ! $this->errors instanceof MessageBag )
-		{
-			$this->errors = App::make('Illuminate\Support\MessageBag');
-		}
-		return true;
-	}
 
 	protected function setAttributes($data, $parent, $relation=null)
 	{
-		$fillable = is_null($relation) && property_exists(is_null($parent) ? $this : $parent, 'acceptNestedAttributes') ? $parent->acceptNestedAttributes[$relation] : $this->fillable; 
+		$fillable = (is_null($parent) || is_null($relation)) ? $this->fillable : $parent->acceptNestedAttributes[$relation];
 		foreach ($data as $key => $value) {
 			if (!in_array($key, $fillable))
 			{

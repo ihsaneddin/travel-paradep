@@ -16,16 +16,7 @@ class Base extends Eloquent implements NestedAttributesInterface,ValidatorInterf
 
  	public function __construct(array $attributes =array())
 	{
-		$this->isMessageBag();
 		parent::__construct($attributes);
 	}
 
- 	public static function boot()
- 	{
- 		parent::boot();
- 		static::saving(function($model)
- 		{
- 			return $model->validate();
- 		});
- 	}
 }

@@ -97,3 +97,64 @@
 .token-input-dropdown-facebook  {
   z-index: 9999;
 }
+
+/*custom carousel bootstrap css*/
+
+.carousel {
+    margin-bottom: 0;
+    padding: 0 40px 30px 40px;
+}
+/* The controlsy */
+.carousel-control {
+  left: -12px;
+    height: 40px;
+  width: 40px;
+    background: none repeat scroll 0 0 #222222;
+    border: 4px solid #FFFFFF;
+    border-radius: 23px 23px 23px 23px;
+    margin-top: 90px;
+}
+.carousel-control.right {
+  right: -12px;
+}
+/* The indicators */
+.carousel-indicators {
+  right: 50%;
+  top: auto;
+  bottom: -10px;
+  margin-right: -19px;
+}
+/* The colour of the indicators */
+.carousel-indicators li {
+  background: #cecece;
+}
+.carousel-indicators .active {
+background: #428bca;
+}
+.remove-photo{
+  display: none;
+  position: absolute;  
+  top: 2%; 
+  left: 85%;
+}
+.remove-photo a{
+  text-decoration: none;
+}
+.icon-remove-photo{
+  font-size: 1.7em;
+}
+.select-remove-photo{
+  display: none;
+  position: absolute;
+  top:91.5%;
+  right: 7.5%;
+}
+.remove-image-buttons{
+  display: none;
+  padding-top: 3%;
+  padding-bottom: 3%;
+}
+
+.remove-selected-image-button, .car-photos-carousel-prototype, #car-photos-list{
+  display: none;
+}

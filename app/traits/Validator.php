@@ -5,19 +5,30 @@ namespace traits;
 use exception\ValidationException;
 use validators\Validator as customValidator;
 use \Schema;
+use \App;
+use Illuminate\Support\MessageBag;
 
 trait Validator
 {
 
+	function rules(){}
+
 	function validate($input=array())
 	{
-		try {
+		$this->rules();//init rules as laravel can not properly perform unique validation
+	    try {
             $validate = $this->validator()->validate( empty($input) ? $this->getAttributesArray() : $input, $this->rules, $this->messages );
  			return true;
         } catch ( ValidationException $exception ) {
-            $this->errors = $exception->getErrors();
+            $this->isMessageBag();
+            $this->errors->merge($exception->getErrors()->getMessageBag());
             return false;
         }
+	}
+
+	function isLegal()
+	{
+		return is_null($this->errors);
 	}
 
 	protected function validator()
@@ -42,6 +53,15 @@ trait Validator
 	protected function getColumns()
 	{
 		return Schema::getColumnListing($this->table);
+	}
+
+	protected function isMessageBag()
+	{
+		if ( ! $this->errors instanceof MessageBag )
+		{
+			$this->errors = App::make('Illuminate\Support\MessageBag');
+		}
+		return true;
 	}
 
 }

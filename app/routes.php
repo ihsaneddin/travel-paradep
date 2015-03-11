@@ -48,6 +48,7 @@ Route::group(['namespace' => 'api', 'prefix' => 'api'], function()
   Route::group(['namespace' => 'datatable', 'prefix' => 'datatable'], function()
   {
     Route::resource('users', 'Users', ['only' => ['index']]);
+    Route::resource('cars', 'Cars', ['only' => ['index']]);
   });
 });
 

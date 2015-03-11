@@ -12,23 +12,12 @@ use \Session;
 
 class Users extends Admin {
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	protected $resource;
 	protected $form = 'admin.master.users.form';
 
 	public function index()
 	{	
-		$users = Table::table()->addColumn('Username', 'Email', 'Role','Last Login', 'Action')
-							   ->setUrl(route('api.datatable.users.index'))
-							   ->noScript();
-    	$this->layout->nest('content', $this->view, ['users' => $users]);
+    	$this->layout->nest('content', $this->view, ['users' => $this->datatable()]);
 	}
-
-
 	/**
 	 * Show the form for creating a new resource.
 	 *
@@ -153,6 +142,13 @@ class Users extends Admin {
 			$this->resource->delete() ? $this->status = 200 : $this->status = 422;
 		}
 		return Response::json(null, $this->status);
+	}
+
+	public function datatable()
+	{
+		return Table::table()->addColumn('Username', 'Email', 'Role','Last Login', 'Action')
+							   ->setUrl(route('api.datatable.users.index'))
+							   ->noScript();
 	}
 
 

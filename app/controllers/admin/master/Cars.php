@@ -1,17 +1,24 @@
 <?php
 namespace admin\master;
 use admin\Admin;
+use \Table;
+use \View;
+use \Response;
+use \Input;
+use \Redirect;
+use \App;
+use \Car;
+use \Category;
 
 class Cars extends Admin {
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
+	protected $form = 'admin.master.cars.form';
+	protected $model = 'TravelCar';
+	protected $resources = array();
+
 	public function index()
 	{
-		//
+    	$this->layout->nest('content', $this->view, ['cars' => $this->datatable()]);
 	}
 
 
@@ -22,7 +29,23 @@ class Cars extends Admin {
 	 */
 	public function create()
 	{
-		//
+		$this->resources = array('car' => $this->resource, 
+ 						'categories' => Category::ClassListSelectInput(),
+ 						'carList' => Car::carListSelectOptions()
+ 						);
+
+		return  $this->respondTo(
+			array('html'=> function()
+				 			{
+				 			 $this->layout->nest('content', $this->view, $this->resources);
+				 			},
+				  'js' => function() 
+				  		  {
+				  		  	 $form = View::make($this->form, $this->resources)->render(); 
+				  		  	 return View::make('admin.shared.modal', array('body' => $form))->render();
+				  		  }
+				 )
+			);
 	}
 
 
@@ -33,7 +56,7 @@ class Cars extends Admin {
 	 */
 	public function store()
 	{
-		//
+		return $this->save('create');
 	}
 
 
@@ -45,7 +68,7 @@ class Cars extends Admin {
 	 */
 	public function show($id)
 	{
-		//
+		$this->layout->nest('content', $this->view, ['car' => $this->resource]);
 	}
 
 
@@ -57,7 +80,22 @@ class Cars extends Admin {
 	 */
 	public function edit($id)
 	{
-		//
+		$this->resources = array('car' => $this->resource, 
+ 								 'categories' => Category::ClassListSelectInput(),
+ 								 'carList' => Car::carListSelectOptions()
+ 						);
+		return  $this->respondTo(
+			array('html'=> function()
+				 			{
+				 			 $this->layout->nest('content', $this->view, $this->resources);
+				 			},
+				  'js' => function()
+				  		  {
+				  		  	 $form = View::make($this->form, $this->resources)->render(); 
+				  		  	 return View::make('admin.shared.modal', array('body' => $form))->render();
+				  		  }
+				 )
+			);
 	}
 
 
@@ -69,7 +107,49 @@ class Cars extends Admin {
 	 */
 	public function update($id)
 	{
-		//
+		return $this->save('edit');		
+	}
+
+	private function datatable()
+	{
+		return Table::table()->addColumn('Code', 'Name', 'Manufacture','License Number', 'Class', 'Seat', 'State', 'Stationed At', 'Action')
+							 ->setUrl(route('api.datatable.cars.index'))
+							 ->noScript();
+	}
+
+	private function save($method)
+	{
+		if ($this->resource->saveATravelCar(Input::all())){
+			return $this->respondTo(
+	        	array(
+	        		'html' => function() 
+	        				  {
+	        				  	return Redirect::route('admin.master.cars.show', ['cars' => $car->id])
+	            				->with('notice', 'Car created');
+	        				  }, 
+	        		'js' => function()
+	        				{
+	        					return $this->resource->load('category', 'model', 'photos');
+	        				}
+	        		)
+	        	); 
+		}else{
+			return $this->respondTo(
+	    		array(
+	    			'html' => function() use($method) 
+	    					  {
+	    					  	return Redirect::action('admin\master\Cars@'.$method)
+				                ->withInput(Input::all())
+				                ->withErrors($this->resource->errors);
+	    					  },
+	    			'js' => function() 
+	        			{
+	        				return $this->resource->errors;	
+	        			},
+	        	'status' => 422
+	    			)
+	    		);
+		}
 	}
 
 
@@ -79,10 +159,6 @@ class Cars extends Admin {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
-	{
-		//
-	}
 
 
 }

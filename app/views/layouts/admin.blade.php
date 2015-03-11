@@ -7,7 +7,11 @@
     <link href="{{asset('assets/plugins/jquery.token-input/css/token-input.css')}}" rel="stylesheet">
     <link href="{{asset('assets/plugins/jquery.token-input/css/token-input-facebook.css')}}" rel="stylesheet">
     <link href="{{asset('assets/css/custom.css')}}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/plugins/selectize/css/selectize.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('assets/plugins/selectize/css/selectize.bootstrap3.css')}}">
     <link href="{{asset('assets/plugins/kartik-v-bootstrap-fileinput/css/fileinput.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/plugins/bootstrap.blueimp/css/blueimp-gallery.min.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/plugins/bootstrap.image-gallery/css/bootstrap-image-gallery.min.css')}}" rel="stylesheet">
 @stop
 
 @section('body')
@@ -45,7 +49,6 @@
     </body>
 @stop
 
-
 @section('script-end')
     <script src="{{asset('assets/plugins/jquery.ui/jquery-ui-1.10.1.custom.min.js')}}"></script>
     <script src="{{asset('assets/plugins/bootstrap-3.0.0/bootstrap.js')}}"></script>
@@ -65,8 +68,10 @@
     <script src="{{asset('assets/js/sidebar.js')}}"></script>
 
     <script type="text/javascript" src="{{asset('assets/plugins/jquery.token-input/js/jquery.tokeninput.js')}}"></script>
-
+    <script type="text/javascript" src="{{asset('assets/plugins/selectize/js/standalone/selectize.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('assets/plugins/kartik-v-bootstrap-fileinput/js/fileinput.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('assets/plugins/bootstrap.blueimp/js/jquery.blueimp-gallery.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('assets/plugins/bootstrap.image-gallery/js/bootstrap-image-gallery.min.js')}}"></script>
 
     <script src="{{asset('assets/js/custom.js')}}"></script>
     <script>
@@ -110,3 +115,4 @@
         }); 
     </script>
 @stop
+

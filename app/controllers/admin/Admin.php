@@ -14,18 +14,13 @@ use \Confide;
 
 class Admin extends \BaseController {
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-
-
 	public $layout = 'layouts.admin';
+	protected $form;
 	protected $resource;
 	protected $status = 401;
 	protected $errors;
 	protected $model;
+
 
 	public function __construct()
 	{
@@ -51,7 +46,6 @@ class Admin extends \BaseController {
 		if (class_exists($resource))
 		{
 			$resourceId = Route::current()->getParameter(strtolower(class_basename(get_class($this))));
-			//dd(array($resourceId));
 			if ( is_null($resourceId) )
 			{
 				return new $resource;
@@ -83,4 +77,10 @@ class Admin extends \BaseController {
 		return $response;
 	}
 
+	public function destroy($id)
+	{
+		$this->resource->delete() ? $this->status = 200 : $this->status = 422;
+		return Response::json(null, $this->status);
+	}
+	
 }

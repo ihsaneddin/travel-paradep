@@ -28,3 +28,19 @@ Breadcrumbs::register('admin.profiles.edit', function($breadcrumbs,$user){
 	$breadcrumbs->parent('dashboards');
 	$breadcrumbs->push('Edit '.$user->username, route('admin.profile.edit'));
 });
+Breadcrumbs::register('admin.master.cars.index', function($breadcrumbs) {
+    $breadcrumbs->parent('master');
+    $breadcrumbs->push('Cars', route('admin.master.cars.index'));
+});
+Breadcrumbs::register('admin.master.cars.create', function($breadcrumbs){
+	$breadcrumbs->parent('admin.master.cars.index');
+	$breadcrumbs->push('New', route('admin.master.cars.create'));
+});
+Breadcrumbs::register('admin.master.cars.edit', function($breadcrumbs,$car){
+	$breadcrumbs->parent('admin.master.cars.index');
+	$breadcrumbs->push($car->model->name, route('admin.master.cars.edit'));
+});
+Breadcrumbs::register('admin.master.cars.show', function($breadcrumbs,$car){
+	$breadcrumbs->parent('admin.master.cars.index');
+	$breadcrumbs->push($car->model->name, route('admin.master.cars.show'));
+});

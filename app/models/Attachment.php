@@ -7,8 +7,6 @@ class Attachment extends Base implements StaplerableInterface{
 
 	protected $table = 'attachments';
 	protected $fillable = ['name', 'description', 'image' ];
-	protected $rules = ['name' => array( 'required', 'alpha_dash', 'max:200' )];
-	protected $messages =array();
 	public $errors;
 
 	public function __construct(array $attributes =array())
@@ -16,14 +14,25 @@ class Attachment extends Base implements StaplerableInterface{
 		$this->hasAttachedFile('image', [
 			'styles' => [
 				'medium' => '300x300',
+				'carousel' => '250x250',
 				'thumb' => '100x100'
 			]
 		]);
 		parent::__construct($attributes);
 	}
 
+	public function rules()
+	{
+		$this->rules = [];
+	}
+
 	public function user()
 	{
 		return $this->belongsTo('User');
 	}
+
+	public function attachable()
+    {
+        return $this->morphTo();
+    }
 }
