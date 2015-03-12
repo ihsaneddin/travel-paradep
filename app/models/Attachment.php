@@ -7,7 +7,7 @@ class Attachment extends Base implements StaplerableInterface{
 
 	protected $table = 'attachments';
 	protected $fillable = ['name', 'description', 'image' ];
-	public $errors;
+	protected $appends = ['carousel_url', 'original_url'];
 
 	public function __construct(array $attributes =array())
 	{
@@ -35,4 +35,13 @@ class Attachment extends Base implements StaplerableInterface{
     {
         return $this->morphTo();
     }
+
+    public function getCarouselUrlAttribute($value)
+	{
+		return is_null($this->image_file_name) ? '' : asset($this->image->url('medium'));
+	}
+	public function getOriginalUrlAttribute($value)
+	{
+		return is_null($this->image_file_name) ? '' : asset($this->image->url());	
+	}
 }

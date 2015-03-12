@@ -107,6 +107,7 @@ class Cars extends Admin {
 	 */
 	public function update($id)
 	{
+		dd(Input::all());
 		return $this->save('edit');		
 	}
 

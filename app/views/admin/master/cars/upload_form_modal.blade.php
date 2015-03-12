@@ -23,30 +23,3 @@
 		</div>
 	</div>
 </div>
-
-<script type="text/javascript">
-  $(document).ready(function(){
-    var uploadCarPhotosForm = $('#car-upload-photos-form');
-    if (uploadCarPhotosForm.length)
-    {
-    	var form = uploadCarPhotosForm,
-    		url = form.attr('action');
-    	form.find('#upload-car-photos').fileinput(
-    	{
-		    uploadUrl: url,
-		    uploadAsync: false,
-		    maxFileCount: 10,
-		    allowedFileTypes: ["image"],
-		    allowedFileExtensions: ["jpeg", "jpg", "png"],
-		    uploadExtraData: {
-	        	_method: 'PUT'
-	    	}
-    	});
-    }
-
-    $('#upload-car-photos').on('fileuploaded', function(event, data, previewId, index) {
-    	 var response = data.response;
-    	 console.log(response.photos[response.photos.length - 1]);
-	});
-  });
-</script>

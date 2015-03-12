@@ -5,6 +5,7 @@ class TravelCar extends Base
 	protected $table = 'travel_cars';
 	protected $fillable = ['car_id', 'category_id', 'license_no', 'stnk_no', 'bpkb_no', 'seat'];
 	protected $acceptNestedAttributes = array('photos' => ['name', 'image']);
+	
 	public function rules()
 	{
 		$this->rules =  array('car_id' => 'required',
@@ -32,8 +33,8 @@ class TravelCar extends Base
 
 	function saveATravelCar($data)
 	{
-		if (array_key_exists('car_id', $data)) $this->carModel($data['car_id'], $data['manufacture']);
-		if (array_key_exists('category_id', $data))  $this->carCategory($data['category_id']);
+		if (array_key_exists('car_id', $data)) $data['car_id'] = $this->carModel($data['car_id'], $data['manufacture'])->id;
+		if (array_key_exists('category_id', $data))  $data['category_id'] = $this->carCategory($data['category_id'])->id;
 		return $this->store($data);
 	}
 
@@ -45,7 +46,7 @@ class TravelCar extends Base
 			$category = Category::create(array('name' => $categoryId, 'for' => 'car'));
 
 		}
-		$this->category_id = $category->id;
+		return $category;
 	}
 
 	protected function carModel($carId,$manufacture)
@@ -53,14 +54,10 @@ class TravelCar extends Base
 		$model = Car::firstOrNew(['id' => $carId]);
 		if ( !$model->id )
 		{
-			if ( is_null($manufacture) || empty($manufacture))
-			{
-				$this->attachError('manufacture', 'Manufacture is required');		
-				return $model;
-			}
-			$model = Car::create(array('name' => $carId, 'manufacture' => $manufacture));
+			if ( is_null($manufacture) || empty($manufacture)) $this->attachError('manufacture', 'Manufacture is required');		
+			else $model = Car::create(array('name' => $carId, 'manufacture' => $manufacture));
 		}
-		$this->car_id = $model->id;
+		return $model;
 	}
 
 }

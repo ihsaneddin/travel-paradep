@@ -1,4 +1,3 @@
-
 {{ Form::model($car, ['route' => Helpers::createOrUpdateRoute($car), 
              'class' => 'form form-horizontal update-data-table form-car',
               'id' => 'car-form', 'method' => Helpers::createOrUpdateMethod($car)]) }}

@@ -155,6 +155,6 @@ background: #428bca;
   padding-bottom: 3%;
 }
 
-.remove-selected-image-button, .car-photos-carousel-prototype, #car-photos-list{
+.remove-selected-image-button, .photos-carousel-prototype, #car-photos-list{
   display: none;
 }

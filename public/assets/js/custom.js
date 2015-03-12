@@ -217,8 +217,8 @@ function reloadDataTable(table)
 
 function changeAvatar(user)
 {
-	var avatar = $('nav').find('#current-user-avatar');
-	var url = user.avatar_url;
+	var avatar = $('nav').find('#current-user-avatar'),
+		url = user.avatar_url;
 	if (avatar.length)
 	{
 		avatar.attr('src', url);
