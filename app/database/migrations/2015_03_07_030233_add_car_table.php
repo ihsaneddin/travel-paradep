@@ -12,7 +12,7 @@ class AddCarTable extends Migration {
 	 */
 	public function up()
 	{
-	   
+
 	   Schema::create('cars', function($table){
 	   		$table->increments('id');
 	   		$table->string('name', 100)->unique();
@@ -24,8 +24,8 @@ class AddCarTable extends Migration {
 	   		$table->string('name')->nullable();
 	   		$table->string('city',100)->nullable();
 	   		$table->string('state',50)->nullable();
-	   		$table->integer('addressable_id')->unsigned();
-	   		$table->integer('addressable_type');
+	   		$table->integer('addressable_id')->unsigned()->nullable();
+	   		$table->string('addressable_type',50)->nullable();
 	   		$table->timestamps();
 	   });
 

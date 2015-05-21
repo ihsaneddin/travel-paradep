@@ -42,5 +42,77 @@ Breadcrumbs::register('admin.master.cars.edit', function($breadcrumbs,$car){
 });
 Breadcrumbs::register('admin.master.cars.show', function($breadcrumbs,$car){
 	$breadcrumbs->parent('admin.master.cars.index');
-	$breadcrumbs->push($car->model->name, route('admin.master.cars.show'));
+	$breadcrumbs->push($car->model->name, route('admin.master.cars.show', array('cars' => $car->id)));
+});
+Breadcrumbs::register('admin.master.stations.index', function($breadcrumbs) {
+    $breadcrumbs->parent('master');
+    $breadcrumbs->push('Stations', route('admin.master.stations.index'));
+});
+Breadcrumbs::register('admin.master.stations.show', function($breadcrumbs,$station) {
+    $breadcrumbs->parent('admin.master.stations.index');
+    $breadcrumbs->push($station->code, route('admin.master.stations.show',array('stations' => $station)));
+});
+Breadcrumbs::register('admin.master.stations.create', function($breadcrumbs){
+	$breadcrumbs->parent('admin.master.stations.index');
+	$breadcrumbs->push('New', route('admin.master.stations.create'));
+});
+Breadcrumbs::register('admin.master.stations.store', function($breadcrumbs){
+	$breadcrumbs->parent('admin.master.stations.index');
+	$breadcrumbs->push('New', route('admin.master.stations.create'));
+});
+Breadcrumbs::register('admin.master.stations.edit', function($breadcrumbs,$station){
+	$breadcrumbs->parent('admin.master.stations.index');
+	$breadcrumbs->push($station->code, route('admin.master.stations.edit',array('stations' => $station->id)));
+});
+Breadcrumbs::register('admin.master.stations.update', function($breadcrumbs,$station){
+	$breadcrumbs->parent('admin.master.stations.index');
+	$breadcrumbs->push($station->code, route('admin.master.stations.edit',array('stations' => $station->id)));
+});
+Breadcrumbs::register('admin.master.drivers.index', function($breadcrumbs){
+	$breadcrumbs->parent('master');
+	$breadcrumbs->push('Drivers', route('admin.master.drivers.index'));
+});
+Breadcrumbs::register('admin.master.drivers.show', function($breadcrumbs,$driver){
+	$breadcrumbs->parent('admin.master.drivers.index');
+	$breadcrumbs->push($driver->name, route('admin.master.drivers.show',array('drivers' => $driver->id)));
+});
+Breadcrumbs::register('admin.master.drivers.create', function($breadcrumbs){
+	$breadcrumbs->parent('admin.master.drivers.index');
+	$breadcrumbs->push("Create", route('admin.master.drivers.create'));
+});
+Breadcrumbs::register('admin.master.drivers.store', function($breadcrumbs){
+	$breadcrumbs->parent('admin.master.drivers.index');
+	$breadcrumbs->push("Create", route('admin.master.drivers.create'));
+});
+Breadcrumbs::register('admin.master.drivers.edit', function($breadcrumbs,$driver){
+	$breadcrumbs->parent('admin.master.drivers.index');
+	$breadcrumbs->push("Edit ".$driver->code, route('admin.master.drivers.edit',array('drivers'=>$driver->id)));
+});
+Breadcrumbs::register('admin.master.drivers.update', function($breadcrumbs,$driver){
+	$breadcrumbs->parent('admin.master.drivers.index');
+	$breadcrumbs->push("Edit ".$driver->code, route('admin.master.drivers.edit',array('drivers'=>$driver->id)));
+});
+Breadcrumbs::register('admin.master.routes.index', function($breadcrumbs){
+	$breadcrumbs->parent('master');
+	$breadcrumbs->push('Routes', route('admin.master.routes.index'));
+});
+Breadcrumbs::register('admin.master.routes.show', function($breadcrumbs,$route){
+	$breadcrumbs->parent('admin.master.routes.index');
+	$breadcrumbs->push($route->code, route('admin.master.routes.show', array('routes' => $route->id)));
+});
+Breadcrumbs::register('admin.master.routes.create', function($breadcrumbs){
+	$breadcrumbs->parent('admin.master.routes.index');
+	$breadcrumbs->push('Create', route('admin.master.routes.create'));
+});
+Breadcrumbs::register('admin.master.routes.store', function($breadcrumbs){
+	$breadcrumbs->parent('admin.master.routes.index');
+	$breadcrumbs->push('Create', route('admin.master.routes.create'));
+});
+Breadcrumbs::register('admin.master.routes.edit', function($breadcrumbs,$route){
+	$breadcrumbs->parent('admin.master.routes.index');
+	$breadcrumbs->push($route->code, route('admin.master.routes.edit',array('routes' => $route->id)));
+});
+Breadcrumbs::register('admin.master.routes.update', function($breadcrumbs,$route){
+	$breadcrumbs->parent('admin.master.routes.index');
+	$breadcrumbs->push($route->code, route('admin.master.routes.edit',array('routes' => $route->id)));
 });

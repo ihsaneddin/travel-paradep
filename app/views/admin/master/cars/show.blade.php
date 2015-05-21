@@ -3,7 +3,7 @@
 @stop
 
 @section('content')
-    
+
     <div class="box">
         <div class="container">
             <div class="panel panel-default">
@@ -40,7 +40,7 @@
                           <dd>Not yet implemented</dd>
                       </dl>
                     </div>
-                    <div class="col-md-6">                      
+                    <div class="col-md-6">
 
                     </div>
               </div>
@@ -51,7 +51,7 @@
     @include('admin.shared.widget_blueimp')
     @include('admin.master.cars.upload_form_modal', ['car' => $car])
     @include('admin.master.cars.photos_prototype', ['car' => $car])
-    
+
     <script type="text/javascript" src="{{asset('assets/js/car-show.js')}}"></script>
 
 @stop

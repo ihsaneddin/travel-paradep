@@ -1,4 +1,4 @@
-{{ Form::model($car, ['route' => Helpers::createOrUpdateRoute($car), 
+{{ Form::model($car, ['route' => Helpers::createOrUpdateRoute($car),
              'class' => 'form form-horizontal update-data-table form-car',
               'id' => 'car-form', 'method' => Helpers::createOrUpdateMethod($car)]) }}
     <div class="form-group {{ Helpers::inputError($errors, 'car_id') }}">
@@ -25,7 +25,7 @@
     <div class="form-group {{ Helpers::inputError($errors, 'category_id') }}">
       {{ Form::label('category_id', 'Class', array('class' => 'col-md-2 control-label')) }}
       <div class="col-md-10">
-        {{ Form::select('category_id', $categories, Input::old('category_id'), 
+        {{ Form::select('category_id', $categories, Input::old('category_id'),
                       array('class' => 'form-control', 'id' => 'category_id')) }}
         <span class='help-inline'>
           {{ $errors->first('category_id') }}
@@ -76,7 +76,7 @@
     </div>
 
     <div class="autocomplete">
-      
+
     </div>
 
     <span class='notify-success-text hidden'> Car is successfully {{$car->exists() ? 'updated' : 'created'}}. </span>

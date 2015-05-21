@@ -1,5 +1,5 @@
 @section('breadcrumbs')
-    {{Helpers::currentBreadcrumbs($car)}}
+    {{Helpers::currentBreadcrumbs()}}
 @stop
 
 @section('content')
@@ -12,13 +12,13 @@
                 </div>
 
                 <div class="panel-body">
-                    @include('admin.master.cars.form', ['car' => $car])
+                    @include('admin.master.drivers.form', ['driver' => $driver])
                 </div>
 
                 <div class="panel-footer">
                 <center>
-                    <button class="btn btn-primary submit-form" data-target='car-form'>Submit</button>
-                    {{link_to_route('admin.master.cars.index', 'Cancel' , [], ['class' => 'btn'])}}
+                    <button class="btn btn-primary submit-form" data-target='driver-form'>Submit</button>
+                    {{link_to_route('admin.master.drivers.index', 'Cancel' , [], ['class' => 'btn'])}}
                 </center>
                 </div>
             </div>

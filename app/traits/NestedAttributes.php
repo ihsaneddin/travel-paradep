@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace traits;
 use \App;
 use exception\NestException;
@@ -11,16 +11,10 @@ trait NestedAttributes
 	protected $nestTree = array();
 	protected $relationTree = array();
 	protected $position=0;
+	protected $_delete = 0;
+	protected $operation = array('_delete');
 
 	//for many relationship
-	public function build($relation)
-	{
-		$child = App::make($this->childClass($relation));
-		if  ( $this->$relation instanceof Collection)
-		{
-			$this->$relation->push($child);
-		}
-	}
 
 	public function store(array $data=array())
 	{
@@ -38,49 +32,57 @@ trait NestedAttributes
 	protected function performSaveNest(array $data = array())
 	{
 		$this->nestByNest($data);
-		if ( ($this->errors instanceof MessageBag) ? $this->errors->any() : !is_null($this->errors) ) 
+		if ( ($this->errors instanceof MessageBag) ? $this->errors->any() : !is_null($this->errors) )
 		{
 			throw new NestException;
 		}
 	}
 
-	//todo : remove root when recursing 
+	//todo : remove root when recursing
 	protected function nestByNest(array $data=array(), $parent=null, $root=null, $relation=null, $previousTree = array())
 	{
 		if(!empty($data))
 		{
-			$this->updateRelationTree($previousTree, $relation);
 			$this->setAttributes($data, $parent, $relation);
-			if ($this->validate()) (is_null($parent) || is_null($relation)) ? $this->save() : $parent->$relation()->save($this);			
-			else $this->attachErrors($root);
-			if (property_exists($this, 'acceptNestedAttributes'))
+
+			if ( $this->markedForDelete() )
 			{
-				foreach ($this->acceptNestedAttributes as $relation => $attributes) {
-					if (array_key_exists($relation, $data))
-					{
-						foreach ($data[$relation] as $index => $childAttributes) 
+				$this->delete();
+			}
+			else
+			{
+				$this->updateRelationTree($previousTree, $relation);
+				if ($this->validate()) (is_null($parent) || is_null($relation)) ? $this->save() : $parent->$relation()->save($this);
+				else $this->attachErrors($root);
+				if (property_exists($this, 'acceptNestedAttributes'))
+				{
+					foreach ($this->acceptNestedAttributes as $relation => $attributes) {
+						if (array_key_exists($relation, $data))
 						{
-							$child = $this->setChild($relation, $attributes);
-							$child->position = $index;	
-							$child->nestByNest($childAttributes, $this, is_null($root) ? $this : $root, $relation, $this->relationTree );
+							foreach ($data[$relation] as $index => $childAttributes)
+							{
+								$child = $this->setChild($relation, $childAttributes);
+								if ($child->id)
+								$child->position = $index;
+								$child->nestByNest($childAttributes, $this, is_null($root) ? $this : $root, $relation, $this->relationTree );
+							}
 						}
 					}
 				}
 			}
-
 		}
 	}
 
-	protected function setChild($relation, $id, $zero=0)
-	{ 
-		$child = App::make($this->childClass($relation))->firstOrNew([ $this->childPrimaryKey($relation) => $id]);
-		
+	protected function setChild($relation, $data, $zero=0)
+	{
+		$child = App::make($this->childClass($relation))->firstOrNew([ $this->childPrimaryKey($relation) => array_get($data, $this->childPrimaryKey($relation))]);
+
 		if ( $this->$relation instanceof Collection )
 		{
 			$this->$relation->push( $child);
 		}
 		else{
-			$this->relations[$relation] = $child;
+			$this->relation = $child;
 		}
 		return $child;
 	}
@@ -93,7 +95,7 @@ trait NestedAttributes
 			$messageBag = $root->errors;
 			foreach ($this->errors->toArray() as $attribute => $messages) {
 				foreach ($messages as $message) {
-					$messageBag->add(''.$this->positionBase().'['.$attribute.']', $message);	
+					$messageBag->add(''.$this->positionBase().'['.$attribute.']', $message);
 				}
 				$root->errors = $messageBag;
 			}
@@ -110,7 +112,7 @@ trait NestedAttributes
 
 	protected function positionBase()
 	{
-		return implode('', $this->relationTree); 
+		return implode('', $this->relationTree);
 	}
 
 	protected function updateRelationTree($previousTree,$relation)
@@ -129,23 +131,29 @@ trait NestedAttributes
 	{
 		$fillable = (is_null($parent) || is_null($relation)) ? $this->fillable : $parent->acceptNestedAttributes[$relation];
 		foreach ($data as $key => $value) {
-			if (!in_array($key, $fillable))
+			if (!in_array($key, $fillable) && !in_array($key, $this->operation))
 			{
 				 unset($data[$key]);
 			}
 		}
-		$this->fill($data); 
+		$this->_delete = array_key_exists('_delete', $data) ? $data['_delete'] : $this->_delete;
+		$this->fill($data);
 	}
 
 	protected function childPrimaryKey($relation)
 	{
-		
-		return App::make($this->childClass($relation))->getKeyname();	
+
+		return App::make($this->childClass($relation))->getKeyname();
 	}
 
 	protected function childClass($relation)
 	{
 		return class_basename(get_class($this->$relation()->getRelated()));
+	}
+
+	protected function markedForDelete()
+	{
+		return $this->_delete == 1 ? true : false;
 	}
 
 }

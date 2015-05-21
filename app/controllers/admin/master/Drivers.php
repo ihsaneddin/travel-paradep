@@ -4,21 +4,27 @@ use admin\Admin;
 use \Table;
 use \View;
 use \Response;
+use \User;
 use \Input;
 use \Redirect;
 use \App;
-use \Car;
-use \Category;
+use \Session;
+use \Address;
+use \Illuminate\Session\Store;
+use \Illuminate\Session\SessionServiceProvider;
 
-class Cars extends Admin {
+class Drivers extends Admin {
 
-	protected $form = 'admin.master.cars.form';
-	protected $model = 'TravelCar';
-	protected $resources = array();
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	protected $form = 'admin.master.drivers.form';
 
 	public function index()
 	{
-    	$this->layout->nest('content', $this->view, ['cars' => $this->datatable()]);
+		$this->layout->nest('content', $this->view, ['drivers' => $this->datatable()]);
 	}
 
 
@@ -29,11 +35,7 @@ class Cars extends Admin {
 	 */
 	public function create()
 	{
-		$this->resources = array('car' => $this->resource,
- 						'categories' => Category::ClassListSelectInput(),
- 						'carList' => Car::carListSelectOptions()
- 						);
-
+		$this->resources = array('driver' => $this->resource);
 		return  $this->respondTo(
 			array('html'=> function()
 				 			{
@@ -68,7 +70,7 @@ class Cars extends Admin {
 	 */
 	public function show($id)
 	{
-		$this->layout->nest('content', $this->view, ['car' => $this->resource]);
+		$this->layout->nest('content', $this->view, ['driver' => $this->resource]);
 	}
 
 
@@ -80,9 +82,7 @@ class Cars extends Admin {
 	 */
 	public function edit($id)
 	{
-		$this->resources = array('car' => $this->resource,
- 								 'categories' => Category::ClassListSelectInput(),
- 								 'carList' => Car::carListSelectOptions()
+		$this->resources = array('driver' => $this->resource
  						);
 		return  $this->respondTo(
 			array('html'=> function()
@@ -112,24 +112,24 @@ class Cars extends Admin {
 
 	private function datatable()
 	{
-		return Table::table()->addColumn('Code', 'Name', 'Manufacture','License Number', 'Class', 'Seat', 'State', 'Stationed At', 'Action')
-							 ->setUrl(route('api.datatable.cars.index'))
+		return Table::table()->addColumn('Name', 'Code', 'Drive Hours','Action')
+							 ->setUrl(route('api.datatable.drivers.index'))
 							 ->noScript();
 	}
 
 	private function save($method)
 	{
-		if ($this->resource->saveATravelCar(Input::all())){
+		if ($this->resource->store(Input::all())){
 			return $this->respondTo(
 	        	array(
 	        		'html' => function()
 	        				  {
-	        				  	return Redirect::route('admin.master.cars.show', ['cars' => $car->id])
-	            				->with('notice', 'Car created');
+	        				  	return Redirect::route('admin.master.drivers.show', ['drivers' => $this->resource->id])
+	            				->with('notice', 'Station created');
 	        				  },
 	        		'js' => function()
 	        				{
-	        					return $this->resource->load('category', 'model', 'photos');
+	        					return $this->resource;
 	        				}
 	        		)
 	        	);
@@ -138,9 +138,7 @@ class Cars extends Admin {
 	    		array(
 	    			'html' => function() use($method)
 	    					  {
-	    					  	return Redirect::action('admin\master\Cars@'.$method)
-				                ->withInput(Input::all())
-				                ->withErrors($this->resource->errors);
+	    					  	 return $this->layout->nest('content', 'admin.master.drivers.'.$method, array('driver' => $this->resource, 'errors' => $this->resource->errors));
 	    					  },
 	    			'js' => function()
 	        			{
@@ -151,14 +149,5 @@ class Cars extends Admin {
 	    		);
 		}
 	}
-
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-
 
 }

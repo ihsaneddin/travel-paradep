@@ -1,4 +1,5 @@
 <?php 
+use observers\TravelCarObserver;
 
 class TravelCar extends Base
 {
@@ -6,6 +7,11 @@ class TravelCar extends Base
 	protected $fillable = ['car_id', 'category_id', 'license_no', 'stnk_no', 'bpkb_no', 'seat'];
 	protected $acceptNestedAttributes = array('photos' => ['name', 'image']);
 	
+	public static function boot() {
+        parent::boot();
+        self::observe(new TravelCarObserver());
+    }
+
 	public function rules()
 	{
 		$this->rules =  array('car_id' => 'required',

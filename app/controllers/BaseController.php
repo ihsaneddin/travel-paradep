@@ -17,7 +17,7 @@ class BaseController extends Controller {
 		}
 	}
 	protected function view()
-	{ 
+	{
       return Route::current()->getName();
 	}
 

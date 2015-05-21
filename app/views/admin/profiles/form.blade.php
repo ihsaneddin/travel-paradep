@@ -1,22 +1,22 @@
-{{Form::model($user, ['route' => Helpers::createOrUpdateRoute($user), 
+{{Form::model($user, ['route' => Helpers::createOrUpdateRoute($user),
              'class' => 'form form-horizontal',
               'id' => 'edit-profile-form', 'method' => 'put', 'files' => true])}}
 
 <div class="form-group {{Helpers::inputError($errors, 'username')}}">
     {{Form::label('username',
-                  'Username', 
+                  'Username',
                   array('class' => 'col-md-2 control-label'))}}
-    
+
     <div class="col-md-10 ">
         {{Form::text('username',
-                     $user->username, 
+                     $user->username,
                      ['class' => 'form-control', 'placeholder' => 'User name']) }}
          <span class="help-inline">
-            {{ $errors->first('username') }}             
+            {{ $errors->first('username') }}
          </span>
     </div>
 </div>
-   
+
 <div class="form-group {{Helpers::inputError($errors, 'avatar')}}">
   {{Form::label('profile picture', 'Avatar',
                 ['class' => 'col-md-2 control-label']) }}
@@ -24,7 +24,7 @@
       {{ Form::file('avatar',
                       ['class' => 'form-control fileinput', 'id' => 'avatar'] )}}
       <span class="help-inline">
-      {{ Helpers::errorMessage($errors, 'avatar') }}             
+      {{ Helpers::errorMessage($errors, 'avatar') }}
       </span>
       {{  Form::hidden('_delete','' , ['id' => '_delete']) }}
   </div>

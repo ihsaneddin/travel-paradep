@@ -5,7 +5,7 @@
 	  <div class="navbar-header">
 	    <a class="navbar-brand" href="#">
 	    	<img src="{{asset('assets/img/sample/logo-app.jpg')}}" alt="">
-	    	<span>Atoz</span>
+	    	<span>Paradep Travel Management System</span>
 	    </a>
 	  </div>
 

@@ -42,6 +42,6 @@ class Attachment extends Base implements StaplerableInterface{
 	}
 	public function getOriginalUrlAttribute($value)
 	{
-		return is_null($this->image_file_name) ? '' : asset($this->image->url());	
+		return is_null($this->image_file_name) ? '' : asset($this->image->url());
 	}
 }

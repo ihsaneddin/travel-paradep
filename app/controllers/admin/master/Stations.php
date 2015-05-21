@@ -9,32 +9,27 @@ use \Input;
 use \Redirect;
 use \App;
 use \Session;
-use \Route;
+use \Station;
 
-
-class Routes extends Admin {
+class Stations extends Admin {
 
 	/**
 	 * Display a listing of the resource.
 	 *
 	 * @return Response
 	 */
-	protected $model = 'Rute';
-	protected $form = 'admin.master.routes.form';
+	protected $form = 'admin.master.stations.form';
 
 	public function __construct()
 	{
 		parent::__construct();
-		$this->beforeFilter('@categories', array('only' =>
-                            array('create','store','edit','update')));
-		$this->beforeFilter('@stations', array('only' =>
-                            array('create','store','edit','update')));
-
+		$this->beforeFilter('@build_addresses', array('only' =>
+                            array('create')));
 	}
 
 	public function index()
 	{
-		$this->layout->nest('content', $this->view, ['routes' => $this->datatable()]);
+		$this->layout->nest('content', $this->view, ['stations' => $this->datatable()]);
 	}
 
 
@@ -45,14 +40,15 @@ class Routes extends Admin {
 	 */
 	public function create()
 	{
+		$this->resources = array('station' => $this->resource);
 		return  $this->respondTo(
 			array('html'=> function()
 				 			{
-				 			 $this->layout->nest('content', $this->view, array('route' => $this->resource, 'options' => $this->options));
+				 			 $this->layout->nest('content', $this->view, $this->resources);
 				 			},
 				  'js' => function()
 				  		  {
-				  		  	 $form = View::make($this->form, array('route' => $this->resource, 'options' => $this->options))->render();
+				  		  	 $form = View::make($this->form, $this->resources)->render();
 				  		  	 return View::make('admin.shared.modal', array('body' => $form))->render();
 				  		  }
 				 )
@@ -79,7 +75,7 @@ class Routes extends Admin {
 	 */
 	public function show($id)
 	{
-		$this->layout->nest('content', $this->view, array('route' => $this->resource));
+		$this->layout->nest('content', $this->view, ['station' => $this->resource]);
 	}
 
 
@@ -91,14 +87,16 @@ class Routes extends Admin {
 	 */
 	public function edit($id)
 	{
+		$this->resources = array('station' => $this->resource
+ 						);
 		return  $this->respondTo(
 			array('html'=> function()
 				 			{
-				 			 $this->layout->nest('content', $this->view, array('route' => $this->resource, 'options' => $this->options));
+				 			 $this->layout->nest('content', $this->view, $this->resources);
 				 			},
 				  'js' => function()
 				  		  {
-				  		  	 $form = View::make($this->form, array('route' => $this->resource, 'options' => $this->options))->render();
+				  		  	 $form = View::make($this->form, $this->resources)->render();
 				  		  	 return View::make('admin.shared.modal', array('body' => $form))->render();
 				  		  }
 				 )
@@ -117,24 +115,23 @@ class Routes extends Admin {
 		return $this->save('edit');
 	}
 
-	public function categories()
+	public function build_addresses()
 	{
-		$this->options['categories'] = \Category::ClassListSelectInput();
+		if ($this->resource->addresses->isEmpty())
+		{
+			$address = new \Address;
+			$this->resource->addresses->push($address);
+		}
 	}
 
-	public function stations()
+	private function datatable()
 	{
-		$this->options['stations'] =  \Station::stationListSelectOptions();
-	}
-
-	protected function datatable()
-	{
-		return Table::table()->addColumn('Name', 'Code', 'From', 'Destination', 'Category','Price', 'Action')
-							 ->setUrl(route('api.datatable.routes.index'))
+		return Table::table()->addColumn('Name', 'Code', 'Address','Action')
+							 ->setUrl(route('api.datatable.stations.index'))
 							 ->noScript();
 	}
 
-	protected function save($method)
+	private function save($method)
 	{
 		if ($this->resource->store(Input::all())){
 			return $this->respondTo(
@@ -142,12 +139,12 @@ class Routes extends Admin {
 	        		'html' => function() use($method)
 	        				  {
 	        				  	$notice = $method == 'create' ? "created" : "updated";
-	        				  	return Redirect::route('admin.master.routes.show', ['routes' => $this->resource->id])
-	            				->with('notice', 'Route is '.$notice);
+	        				  	return Redirect::route('admin.master.stations.show', ['stations' => $this->resource->id])
+	            				->with('notice', 'Station is '.$notice);
 	        				  },
 	        		'js' => function()
 	        				{
-	        					return $this->resource->load('departure','destination');
+	        					return $this->resource->load('addresses');
 	        				}
 	        		)
 	        	);
@@ -156,7 +153,7 @@ class Routes extends Admin {
 	    		array(
 	    			'html' => function() use($method)
 	    					  {
-	    					  	 return $this->layout->nest('content', 'admin.master.routes.'.$method, array('route' => $this->resource, 'errors' => $this->resource->errors, 'options' => $this->options));
+	    					  	 return $this->layout->nest('content', 'admin.master.stations.'.$method, array('station' => $this->resource, 'errors' => $this->resource->errors));
 	    					  },
 	    			'js' => function()
 	        			{
@@ -167,6 +164,5 @@ class Routes extends Admin {
 	    		);
 		}
 	}
-
 
 }

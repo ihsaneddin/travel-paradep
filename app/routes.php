@@ -29,7 +29,8 @@ Route::group(['namespace' => 'admin'], function(){
       Route::resource('users', 'Users');
       Route::resource('cars', 'Cars');
       Route::resource('routes', 'Routes');
-      Route::resource('schedules', 'Schedules');
+      Route::resource('stations', 'Stations');
+      Route::resource('drivers', 'Drivers');
     });
   });
 
@@ -37,7 +38,7 @@ Route::group(['namespace' => 'admin'], function(){
   Route::get('sign_in', ['as' => 'admin.sessions.create', 'uses' => 'Sessions@create']);
   Route::post('sign_in', ['as' => 'admin.sessions.store', 'uses' => 'Sessions@store']);
   Route::get('sign_out', ['as' => 'admin.sessions.destroy', 'uses' => 'Sessions@destroy']);
-  
+
 });
 
 //api
@@ -49,11 +50,14 @@ Route::group(['namespace' => 'api', 'prefix' => 'api'], function()
   {
     Route::resource('users', 'Users', ['only' => ['index']]);
     Route::resource('cars', 'Cars', ['only' => ['index']]);
+    Route::resource('stations', 'Stations', ['only' => ['index']]);
+    Route::resource('drivers', 'Drivers', ['only' => ['index']]);
+    Route::resource('routes', 'Routes', ['only' => ['index']]);
   });
 });
 
 
 // Applies auth filter to the routes within admin/
-//Route::when('admin/*', 'confide'); 
+//Route::when('admin/*', 'confide');
 
 

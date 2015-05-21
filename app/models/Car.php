@@ -1,10 +1,10 @@
-<?php 
+<?php
 
 class Car extends Base
 {
-	public $timestamps = false; 
+	public $timestamps = false;
 	protected $fillable = ['name', 'manufacture'];
-	protected $rules = ['name' => array( 'required')];
+	protected $rules = ['name' => 'required'];
 	protected $messages =array();
 
 	function travelCars()

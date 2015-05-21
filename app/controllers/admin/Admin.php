@@ -20,6 +20,7 @@ class Admin extends \BaseController {
 	protected $status = 401;
 	protected $errors;
 	protected $model;
+	protected $options = array();
 
 
 	public function __construct()
@@ -54,7 +55,7 @@ class Admin extends \BaseController {
 			{
 				return call_user_func_array(array($resource, 'findOrFail'), array($resourceId));
 			}
-		} 
+		}
 	}
 	//params options expect closure
 	protected function respondTo(array $options=array())
@@ -65,14 +66,14 @@ class Admin extends \BaseController {
 			if (is_callable($options['js']))
 			{
 				$response =  Response::json($options['js'](), array_key_exists('status', $options) ? $options['status'] : 200 );
-			}	
+			}
 		}
 		else
 		{
 			if (is_callable($options['html']))
 			{
 				$response = $options['html']();
-			}	
+			}
 		}
 		return $response;
 	}
@@ -82,5 +83,5 @@ class Admin extends \BaseController {
 		$this->resource->delete() ? $this->status = 200 : $this->status = 422;
 		return Response::json(null, $this->status);
 	}
-	
+
 }
