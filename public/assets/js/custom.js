@@ -6,7 +6,7 @@ $.ajaxSetup({
 });
 
 //display loading when ajax fired
-jQuery(document).ajaxStart(function (request) 
+jQuery(document).ajaxStart(function (request)
 	{
 		loading({'show' : true, 'message' : 'Please wait..'})
 	}).ajaxStop(function () {
@@ -28,13 +28,13 @@ function deleteRowRecord(event,element)
 //function to set confirmation modal
 function confirmationModal(text,data)
 {
-	if ($('#modal-confirmation').length > 0) 
-	{ 
+	if ($('#modal-confirmation').length > 0)
+	{
 		//set modal type
 		$('#modal-confirmation #confirmation-type').removeClass().addClass('alert alert-'+text['alert']);
 		$('#modal-confirmation .modal-body h4').text(text['confirm']);
 		$('#modal-confirmation .modal-content modal-footer .confirmation-button').text(text['button']);
-		
+
 		//add data-href and data target to button confirm
 		var confirm = $('#modal-confirmation .modal-content .modal-footer .confirmation-button');
 		confirm.attr('data-href', data['href']);
@@ -77,8 +77,8 @@ function loading(data)
 	}
 	else
 	{
-		$('.ajax-loading').hide();	
-	}	
+		$('.ajax-loading').hide();
+	}
 }
 
 //function to update datatable entries info
@@ -137,8 +137,7 @@ function submitModalForm(submit)
 	 	url = form.attr('action'),
 	 	process = false,
 	 	content = false,
-	 	data = data = new FormData(form[0]);;
-
+	 	data = new FormData(form[0]);
 	$.ajax({
 		dataType: 'json',
 		url: url,
@@ -179,6 +178,19 @@ function submitModalForm(submit)
 	      	modal.find('select').val('');
 	      }
 
+	      if ($('select.station-options').length && $('form#route-form').length)
+	      {
+	      	var i = 0,
+	      		city = request.addresses[0].city,
+	      		text = request.name,
+	      		value = request.id;
+	      	$('select.station-options').each(function(){
+	      		$('select.station-options')[i].selectize.addOptionGroup(city, {label: city });
+	      		$('select.station-options')[i].selectize.addOption({value: value,text: text, optgroup: city});
+	      		i = i + 1;
+	      	});
+	      }
+
 	      clearPasswordFields(form);
 	      clearErrorsValidation(form);
 
@@ -211,7 +223,7 @@ function reloadDataTable(table)
 	{
 		table.dataTable();
 		table.fnClearTable( 0 );
-  		table.fnDraw();		
+  		table.fnDraw();
 	}
 }
 
@@ -256,7 +268,7 @@ function newModalForm(event,element)
 				currentModal.find('.token-autocomplete').each(function(){
 					initAutocomplete($(this));
 				});
-				
+
 				//add target attr to submit button
 				currentModal.find('.submit-modal-form').attr('data-target', ''+currentModal.find('form').attr('id'));
 				if (newForm) currentModal.addClass('new-object');
@@ -274,7 +286,7 @@ function newModalForm(event,element)
 function clearPasswordFields(form)
 {
   form.find('input[type=password]').each(function(){
-  	 $(this).val(''); 
+  	 $(this).val('');
   });
 }
 
@@ -288,17 +300,17 @@ function clearErrorsValidation(form)
 
 function initSelectize(element, options )
 {
-	element.selectize(options);	
+	element.selectize(options);
 }
 
 function provideManufacture(form, car)
 {
-	car = car[0].selectize;      
+	car = car[0].selectize;
   	car.on('item_add', function(value){
         var currentOption = car.getOption(value);
         if ( !currentOption.parents('div.optgroup').length )
         {
-            form.find('.manufacture-input').removeClass('hidden'); 
+            form.find('.manufacture-input').removeClass('hidden');
         }
         else
         {
@@ -325,7 +337,7 @@ $(document).ready(function(event){
 				{
 					if (rowLink !== undefined)
 					{
-						//remove row containing record 
+						//remove row containing record
 						$('#'+rowLink).parents('tr').remove();
 						//update datatable info entries
 						datatableUpdateEntriesInfo();
@@ -363,9 +375,9 @@ $(document).ready(function(event){
 
 	});
 
-	$('.new-modal-form').click(function(e)
+	$(document).on('click', '.new-modal-form', function(e)
 	{
-		newModalForm(e,this);	
+		newModalForm(e,this);
 	});
 });
 

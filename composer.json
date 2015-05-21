@@ -10,7 +10,8 @@
 		"davejamesmiller/laravel-breadcrumbs": "~2.3",
 		"codesleeve/stapler": "1.0.*",
 		"codesleeve/laravel-stapler": "1.0.*",
-		"laravelbook/ardent": "~2.4"
+		"laravelbook/ardent": "~2.4",
+		"symfony/var-dumper": "~2.6"
 	},
 	"autoload": {
 		"classmap": [
@@ -24,8 +25,10 @@
 			"app/interfaces",
 			"app/traits",
 			"app/validators",
-			"app/exception"
-		]
+			"app/exception",
+			"app/extensions"
+		],
+		"files":["app/helpers/application_helper.php"]
 	},
 	"scripts": {
 		"post-install-cmd": [
