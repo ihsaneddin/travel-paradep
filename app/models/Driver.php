@@ -16,4 +16,14 @@ class Driver extends Base
 						'code' => 'required|unique:drivers,code,'.$this->id);
 	}
 
+	public function scopeListSelectInput($res)
+	{
+		$list = array();
+		foreach ($res->get() as $driver) {
+			$list = array_add($list, $driver->id, $driver->code);
+		}
+		$list = array_add($list, '', 'Select driver...');
+		return $list;
+	}
+
 }

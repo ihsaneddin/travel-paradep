@@ -58,7 +58,7 @@
 
 /*customize tokenfield style*/
 
-.form-and-autocomplete .tokenfield{ 
+.form-and-autocomplete .tokenfield{
   height: 28px;
   max-height: 100%;
 }
@@ -78,7 +78,7 @@
   font-size: 12px;
 }
 .form-and-autocomplete .tokenfield .twitter-typeahead .tt-input{
-  
+
   position:relative;
   font-size: 12px;
 }
@@ -133,8 +133,8 @@ background: #428bca;
 }
 .remove-photo{
   display: none;
-  position: absolute;  
-  top: 2%; 
+  position: absolute;
+  top: 2%;
   left: 85%;
 }
 .remove-photo a{

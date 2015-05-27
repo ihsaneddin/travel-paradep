@@ -32,6 +32,12 @@ Route::group(['namespace' => 'admin'], function(){
       Route::resource('stations', 'Stations');
       Route::resource('drivers', 'Drivers');
     });
+
+    Route::group(array('prefix' => 'process', 'namespace' => 'process'), function(){
+      Route::resource('bookings', 'Bookings');
+      Route::resource('trips', 'Trips');
+    });
+
   });
 
   //confide routes here

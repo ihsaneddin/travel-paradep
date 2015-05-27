@@ -4,6 +4,8 @@
     <link href="{{asset('assets/css/social-coloredicons-buttons.css')}}" rel="stylesheet">
     <link href="{{asset('assets/plugins/jquery.ambiance/jquery.ambiance.css')}}" rel="stylesheet">
     <link href="{{asset('assets/css/animation.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/plugins/bootstrap.datepicker/css/datepicker.css')}}" rel="stylesheet">
+    <link href="{{asset('assets/plugins/bootstrap.datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet">
     <link href="{{asset('assets/plugins/jquery.token-input/css/token-input.css')}}" rel="stylesheet">
     <link href="{{asset('assets/plugins/jquery.token-input/css/token-input-facebook.css')}}" rel="stylesheet">
     <link href="{{asset('assets/css/custom.css')}}" rel="stylesheet">
@@ -12,6 +14,7 @@
     <link href="{{asset('assets/plugins/kartik-v-bootstrap-fileinput/css/fileinput.css')}}" rel="stylesheet">
     <link href="{{asset('assets/plugins/bootstrap.blueimp/css/blueimp-gallery.min.css')}}" rel="stylesheet">
     <link href="{{asset('assets/plugins/bootstrap.image-gallery/css/bootstrap-image-gallery.min.css')}}" rel="stylesheet">
+
 @stop
 
 @section('body')
@@ -26,11 +29,11 @@
 
                 <div id="content">
                     <div class="box">
-                    
+
                         <h3 class='panel-title'>
                             @yield('breadcrumbs')
                         </h3>
-                        
+
                         <div class="container">
                             @yield('content')
                         </div>
@@ -52,6 +55,8 @@
 @section('script-end')
     <script src="{{asset('assets/plugins/jquery.ui/jquery-ui-1.10.1.custom.min.js')}}"></script>
     <script src="{{asset('assets/plugins/bootstrap-3.0.0/bootstrap.js')}}"></script>
+    <script type="text/javascript" src="{{asset('assets/plugins/momentjs/moment.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('assets/plugins/momentjs/locales/en-gb.js')}}"></script>
     <script src="{{asset('assets/js/app.js')}}"></script>
 
     <script src="{{asset('assets/plugins/jquery.blockUI/jquery.blockUI.js')}}"></script>
@@ -72,6 +77,7 @@
     <script type="text/javascript" src="{{asset('assets/plugins/kartik-v-bootstrap-fileinput/js/fileinput.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('assets/plugins/bootstrap.blueimp/js/jquery.blueimp-gallery.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('assets/plugins/bootstrap.image-gallery/js/bootstrap-image-gallery.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('assets/plugins/bootstrap.datetimepicker/js/bootstrap-datetimepicker.min.js')}}"></script>
 
     <script src="{{asset('assets/js/custom.js')}}"></script>
     <script>
@@ -102,7 +108,7 @@
         $(function(){
             var notifcation = {};
             @if (Session::has('error'))
-                notifcation = { 'type' : 'error', 'title' : 'Error', 'message' : '{{Session::get('error')}}', 'timeout' : 10 }; 
+                notifcation = { 'type' : 'error', 'title' : 'Error', 'message' : '{{Session::get('error')}}', 'timeout' : 10 };
             @endif
 
             @if (Session::has('notice'))
@@ -112,7 +118,7 @@
             {
                 notify(notifcation);
             }
-        }); 
+        });
     </script>
 @stop
 

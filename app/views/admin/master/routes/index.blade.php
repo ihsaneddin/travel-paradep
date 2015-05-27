@@ -22,7 +22,7 @@
                 <div class="pull-right panel-action">
                     <div class="btn-group">
 
-                        {{Helpers::link_to('admin.master.routes.create', '<i class="icon icon-plus"></i>', [],['class' => 'btn btn-default new-modal-form new-object', 'data-target' => 'modal-new-route'])}}
+                        {{Helpers::link_to('admin.master.routes.create', '<i class="icon icon-plus"></i>', [],['class' => 'btn btn-default new-modal-form new-object', 'data-target' => 'modal-new-route' ])}}
 
                         <a href="#" class="btn dropdown-toggle last" data-toggle="dropdown"><i class="icon icon-gear"></i> <b class="caret"></b></a>
                         <ul class="dropdown-menu pull-right">

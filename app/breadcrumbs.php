@@ -116,3 +116,21 @@ Breadcrumbs::register('admin.master.routes.update', function($breadcrumbs,$route
 	$breadcrumbs->parent('admin.master.routes.index');
 	$breadcrumbs->push($route->code, route('admin.master.routes.edit',array('routes' => $route->id)));
 });
+Breadcrumbs::register('admin.process.trips.index', function($breadcrumbs){
+	$breadcrumbs->parent('master');
+	$breadcrumbs->push('Trips', route('admin.process.trips.index'));
+});
+Breadcrumbs::register('admin.process.trips.show', function($breadcrumbs, $trip){
+	$breadcrumbs->parent('admin.process.trips.index');
+	$breadcrumbs->push($trip->code, route('admin.process.trips.show', array('trips' => $trip->id)));
+});
+Breadcrumbs::register('admin.process.trips.create', function($breadcrumbs){
+	$breadcrumbs->parent('admin.process.trips.index');
+	$breadcrumbs->push('Create', route('admin.process.trips.create'));
+});
+Breadcrumbs::register('admin.process.trips.store', function($breadcrumbs){
+	$breadcrumbs->parent('admin.process.trips.index');
+	$breadcrumbs->push('Create', route('admin.process.trips.create'));
+});
+
+

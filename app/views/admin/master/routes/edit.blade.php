@@ -1,5 +1,5 @@
 @section('breadcrumbs')
-    {{Helpers::currentBreadcrumbs()}}
+    {{Helpers::currentBreadcrumbs($route)}}
 @stop
 
 @section('content')

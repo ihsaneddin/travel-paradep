@@ -63,6 +63,8 @@ class Stations extends Admin {
 	 */
 	public function store()
 	{
+		//dd(Input::all());
+		//die();
 		return $this->save('create');
 	}
 

@@ -28,10 +28,10 @@ class Routes extends Api {
 	        	return '<span class="code">'.$route->code.'</span>';
 	        })
 	        ->addColumn('from', function($route){
-        		return '<span class="from"> </span>';
+        		return '<span class="from"> '.$route->departure_station.'</span>';
 	        })
 	        ->addColumn('destination', function($route){
-        		return '<span class="from"> </span>';
+        		return '<span class="from">'.$route->destination_station.' </span>';
 	        })
 	        ->addColumn('class', function($route){
         		return '<span class="category">'.$route->category->name.' </span>';

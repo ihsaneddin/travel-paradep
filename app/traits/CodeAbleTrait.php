@@ -1,0 +1,53 @@
+<?php
+namespace traits;
+
+trait CodeAble {
+
+	protected $codeable = array('code' => array('route.code','route.departure.code','route.destination.code'),
+								'timestamp' => true, 'separator' => '-' );
+
+	public function set_code()
+	{
+		if (!empty($this->codeable))
+		{
+			$codeable = $this->codeable;
+			foreach ($codeable as $attribute => $elements_code) {
+				if (is_array($elements_code))
+				{
+					$options = array();
+					$options['timestamp'] = array_key_exists('timestamp', $codeable) ? $codeable['timestamp'] : false ;
+					$options['separator'] = array_key_exists('separator', $codeable) ? $codeable['separator'] : '' ;
+					unset($codeable['timestamp']);
+					unset($codeable['separator']);
+					$this->codeable($attribute, $elements_code, $options);
+				}
+			}
+		}
+	}
+
+	protected function codeable($attribute, array $elements_code, array $options)
+	{
+		$code_arr = array();
+		foreach ($elements_code as $element) {
+			$element_arr = explode('.', $element);
+			$object = $this;
+			foreach ($element_arr as $method) {
+				if ($method != end($element_arr))
+				{
+					$object = $object->$method()->first();
+				}else{
+					array_push($code_arr, $object->$method);
+				}
+
+			}
+		}
+		$this->$attribute = implode($options['separator'], $code_arr).$options['separator'].$this->set_timestamp();
+	}
+
+	protected function set_timestamp()
+	{
+		$timestamp =  new \DateTime();
+		return $timestamp->getTimestamp();
+	}
+
+}

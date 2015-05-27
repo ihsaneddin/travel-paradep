@@ -178,7 +178,7 @@ function submitModalForm(submit)
 	      	modal.find('select').val('');
 	      }
 
-	      if ($('select.station-options').length && $('form#route-form').length)
+	      if ($('select.station-options').length && $('form#route-form').length && ( form.attr('id') == 'station-form') )
 	      {
 	      	var i = 0,
 	      		city = request.addresses[0].city,
@@ -268,10 +268,11 @@ function newModalForm(event,element)
 				currentModal.find('.token-autocomplete').each(function(){
 					initAutocomplete($(this));
 				});
-
+				currentModal.find('form').attr('id', 'form-'+targetModal);
 				//add target attr to submit button
 				currentModal.find('.submit-modal-form').attr('data-target', ''+currentModal.find('form').attr('id'));
 				if (newForm) currentModal.addClass('new-object');
+
 				currentModal.modal('show');
 			}
 		});
@@ -379,5 +380,23 @@ $(document).ready(function(event){
 	{
 		newModalForm(e,this);
 	});
+
+	 $(function(){
+            $('#pageCrud').on('click', '.btn-delete', function(){
+                bootbox.confirm("Are you sure to delete this data?", function(result) {
+                    if(result){
+                        $('#panelCrud').block({message: 'Refreshing...'});
+                        setTimeout(function(){$('#panelCrud').unblock()}, 2000);
+                    }
+                });
+            });
+
+            $('#btnToggleAdvanceSearch').on('click', function(){
+                $('#formAdvanceSearch').toggleClass('hide');
+            });
+        });
+
+	 $('#panelScroll').slimscroll();
+
 });
 

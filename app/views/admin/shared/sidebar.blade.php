@@ -39,10 +39,10 @@
                         </div>
                         <ul id="collapse-processes" class="accordion-body nav nav-list collapse sub-menu">
                             <li>
-                                {{Helpers::link_to('admin.master.users.index', '<i class="icon-folder-open icon"></i> <span>Bookings</span>', [], [])}}
+                                {{Helpers::link_to('admin.process.bookings.index', '<i class="icon-folder-open icon"></i> <span>Bookings</span>', [], [])}}
                             </li>
                             <li>
-                            {{Helpers::link_to('admin.master.users.index', '<i class="icon-plane icon"></i> <span>Trips</span>', [], [])}}
+                                {{Helpers::link_to('admin.process.trips.index', '<i class="icon-plane icon"></i> <span>Trips</span>', [], [])}}
                             </li>
                         </ul>
                     </div>

@@ -1,12 +1,13 @@
-<?php 
+<?php
 use observers\TravelCarObserver;
 
 class TravelCar extends Base
 {
 	protected $table = 'travel_cars';
+	protected $appends = array('merk','class');
 	protected $fillable = ['car_id', 'category_id', 'license_no', 'stnk_no', 'bpkb_no', 'seat'];
 	protected $acceptNestedAttributes = array('photos' => ['name', 'image']);
-	
+
 	public static function boot() {
         parent::boot();
         self::observe(new TravelCarObserver());
@@ -60,10 +61,28 @@ class TravelCar extends Base
 		$model = Car::firstOrNew(['id' => $carId]);
 		if ( !$model->id )
 		{
-			if ( is_null($manufacture) || empty($manufacture)) $this->attachError('manufacture', 'Manufacture is required');		
+			if ( is_null($manufacture) || empty($manufacture)) $this->attachError('manufacture', 'Manufacture is required');
 			else $model = Car::create(array('name' => $carId, 'manufacture' => $manufacture));
 		}
 		return $model;
+	}
+
+	public function scopeListSelectInput($res)
+	{
+		$list = array();
+		$list = $res->lists('code', 'id');
+		$list = array_add($list, '', 'Select car...');
+		return $list;
+	}
+
+	public function getClassAttribute($val)
+	{
+		return $this->category()->first()->name;
+	}
+
+	public function getMerkAttribute($val)
+	{
+		return $this->model()->first()->name;
 	}
 
 }

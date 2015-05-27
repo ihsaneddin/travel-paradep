@@ -26,7 +26,7 @@ class User extends Eloquent implements ConfideUserInterface, StaplerableInterfac
 	 * @var string
 	 */
 	protected $table = 'users';
-	protected $fillable = ['username','email', 'avatar']; 
+	protected $fillable = ['username','email', 'avatar', 'station_id'];
 	protected $validator;
 	protected $rules = array();
  	protected $messages = array();
@@ -79,7 +79,7 @@ class User extends Eloquent implements ConfideUserInterface, StaplerableInterfac
 	{
 		if (!empty($filter))
 		{
-			$query = array(); 
+			$query = array();
 				if  (!is_null($filter['name']))
 			{
 				array_push($query, 'Lower(username) like "%'.$filter['name'].'%"');
