@@ -4,7 +4,7 @@ use observers\TravelCarObserver;
 class TravelCar extends Base
 {
 	protected $table = 'travel_cars';
-	protected $appends = array('merk','class');
+	protected $appends = array('merk','class', 'manufacture');
 	protected $fillable = ['car_id', 'category_id', 'license_no', 'stnk_no', 'bpkb_no', 'seat'];
 	protected $acceptNestedAttributes = array('photos' => ['name', 'image']);
 
@@ -77,12 +77,29 @@ class TravelCar extends Base
 
 	public function getClassAttribute($val)
 	{
-		return $this->category()->first()->name;
+		$category = $this->category()->first();
+		if (!empty($category))
+		{
+			return $this->category()->first()->name;
+		}
 	}
 
 	public function getMerkAttribute($val)
 	{
-		return $this->model()->first()->name;
+		$model = $this->model()->first();
+		if (!empty($model))
+		{
+			return $this->model()->first()->name;
+		}
+	}
+
+	public function getManufactureAttribute($val)
+	{
+		$model = $this->model()->first();
+		if (!empty($model))
+		{
+			return $model->manufacture;
+		}
 	}
 
 }

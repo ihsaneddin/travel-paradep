@@ -47,7 +47,9 @@
 
         @include('admin.shared.loading')
 
-        <div id='modal'></div>
+        <div id='modal'>
+            @yield('modal')
+        </div>
 
     </body>
 @stop

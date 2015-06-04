@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class Category extends Base
 {
@@ -8,6 +8,11 @@ class Category extends Base
 	public function travelCars()
 	{
 		return $this->hasMany('TravelCar');
+	}
+
+	public function routes()
+	{
+		return $this->hasMany('Routes', 'category_id');
 	}
 
 	public function scopeClassListSelectInput($res)

@@ -2,18 +2,18 @@
 
 class Rute extends Base
 {
-	protected $fillable = ['name', 'code', 'price', 'category_id', 'departure', 'destination'];
+	protected $fillable = ['name', 'code', 'price', 'category_id', 'departure_id', 'destination_id'];
 	protected $table = 'routes';
 	protected $appends= array('destination_station', 'departure_station');
 
 	public function departure()
 	{
-		return $this->belongsTo('Station', 'departure');
+		return $this->belongsTo('Station', 'departure_id');
 	}
 
 	public function destination()
 	{
-		return $this->belongsTo('Station', 'destination');
+		return $this->belongsTo('Station', 'destination_id');
 	}
 
 	public function category()
@@ -26,8 +26,8 @@ class Rute extends Base
 		$this->rules =  array('name' => 'required',
 							  'code' => 'required|unique:routes,code,'.$this->id,
 							  'price' => 'required|numeric',
-							  'departure' => 'required|different:destination',
-							  'destination' => 'required|different:departure',
+							  'departure_id' => 'required|different:destination_id',
+							  'destination_id' => 'required',
 							  'category_id' => 'required');
 	}
 

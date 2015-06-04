@@ -71,24 +71,24 @@
         </div>
 
         <div class="panel-body">
-          <div class="form-group {{ Helpers::inputError($errors, 'departure') }}">
-            {{ Form::label('departure', 'Departure', array('class' => 'col-md-2 control-label')) }}
+          <div class="form-group {{ Helpers::inputError($errors, 'departure_id') }}">
+            {{ Form::label('departure_id', 'Departure', array('class' => 'col-md-2 control-label')) }}
             <div class="col-md-10">
-              {{ Form::select('departure', $options['stations'], Input::old('departure'),
+              {{ Form::select('departure_id', $options['stations'], Input::old('departure_id'),
                               array('class' => 'form-control station-options', 'id' => 'departure')) }}
               <span class='help-inline'>
-                {{ $errors->first('departure') }}
+                {{ $errors->first('departure_id') }}
               </span>
             </div>
           </div>
 
-          <div class="form-group {{ Helpers::inputError($errors, 'destination') }}">
-            {{ Form::label('destination', 'Destination', array('class' => 'col-md-2 control-label')) }}
+          <div class="form-group {{ Helpers::inputError($errors, 'destination_id') }}">
+            {{ Form::label('destination_id', 'Destination', array('class' => 'col-md-2 control-label')) }}
             <div class="col-md-10">
-              {{ Form::select('destination', $options['stations'], Input::old('destination'),
+              {{ Form::select('destination_id', $options['stations'], Input::old('destination_id'),
                               array('class' => 'form-control station-options', 'id' => 'destination')) }}
               <span class='help-inline'>
-                {{ $errors->first('destination') }}
+                {{ $errors->first('destination_id') }}
               </span>
             </div>
           </div>

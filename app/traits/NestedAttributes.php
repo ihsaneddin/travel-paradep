@@ -13,6 +13,7 @@ trait NestedAttributes
 	protected $position=0;
 	protected $_delete = 0;
 	protected $operation = array('_delete');
+	protected $fillable_update= array();
 
 	//for many relationship
 
@@ -97,8 +98,8 @@ trait NestedAttributes
 				foreach ($messages as $message) {
 					$messageBag->add(''.$this->positionBase().'['.$attribute.']', $message);
 				}
-				$root->errors = $messageBag;
 			}
+			$root->errors = $messageBag;
 		}
 
 	}
@@ -108,6 +109,21 @@ trait NestedAttributes
 		$this->isMessageBag();
 		$messageBag = $this->errors;
 		$messageBag->add($key,$message);
+	}
+
+	protected function attachErrorsParent(\Eloquent $parent,$relation)
+	{
+		$this->isMessageBag();
+		$messageBag = $this->errors;
+		if ($parent->errors instanceof MessageBag)
+		{
+			foreach ($parent->errors->toArray() as $attribute => $messages) {
+				foreach ($messages as $message) {
+					$messageBag->add(''.$relation.'['.$attribute.']', $message);
+				}
+			}
+		}
+		$this->errors = $messageBag;
 	}
 
 	protected function positionBase()
@@ -127,9 +143,10 @@ trait NestedAttributes
 	}
 
 
-	protected function setAttributes($data, $parent, $relation=null)
+	protected function setAttributes($data, $parent=null, $relation=null)
 	{
-		$fillable = (is_null($parent) || is_null($relation)) ? $this->fillable : $parent->acceptNestedAttributes[$relation];
+		$allowed_attributes = $this->allowedAttributes();
+		$fillable = (is_null($parent) || is_null($relation)) ? $allowed_attributes : $parent->acceptNestedAttributes[$relation];
 		foreach ($data as $key => $value) {
 			if (!in_array($key, $fillable) && !in_array($key, $this->operation))
 			{
@@ -138,6 +155,16 @@ trait NestedAttributes
 		}
 		$this->_delete = array_key_exists('_delete', $data) ? $data['_delete'] : $this->_delete;
 		$this->fill($data);
+	}
+
+	protected function allowedAttributes()
+	{
+		$allowedAttributes = $this->fillable;
+		if ($this->exists)
+		{
+			$allowedAttributes = empty($this->fillable_update) ? $allowedAttributes : $this->fillable_update;
+		}
+		return $allowedAttributes;
 	}
 
 	protected function childPrimaryKey($relation)

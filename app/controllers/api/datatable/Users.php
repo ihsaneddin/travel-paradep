@@ -38,7 +38,7 @@ class Users extends Api {
 	        ->addColumn('action', function($user){
 	        	$str = '<div class="btn-group action">
                     		<a href="'.route('admin.master.users.edit', ['users' => $user->id]).'" class="btn btn-default btn-xs new-modal-form"  data-target="modal-edit-user-'.$user->id.'""><i class="icon icon-pencil"></i></a>
-                    		<a id = "delete-record-'.$user->id.'" href="'.route('admin.master.users.destroy', ['users' => $user->id]).'" class="btn btn-default btn-delete btn-xs delete-table-record" onclick="deleteRowRecord(event,this);" data-method="delete"><i class="icon icon-trash"></i></a>
+                    		<a id = "delete-record-'.$user->id.'" href="'.route('admin.master.users.destroy', ['users' => $user->id]).'" class="btn btn-default btn-delete btn-xs delete-table-record confirm" data-method="delete"><i class="icon icon-trash"></i></a>
                 		</div>';
                 return $str;
 	        })

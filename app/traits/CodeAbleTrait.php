@@ -3,8 +3,7 @@ namespace traits;
 
 trait CodeAble {
 
-	protected $codeable = array('code' => array('route.code','route.departure.code','route.destination.code'),
-								'timestamp' => true, 'separator' => '-' );
+	protected $codeable = array();
 
 	public function set_code()
 	{
@@ -41,13 +40,14 @@ trait CodeAble {
 
 			}
 		}
-		$this->$attribute = implode($options['separator'], $code_arr).$options['separator'].$this->set_timestamp();
+		$this->$attribute = implode($options['separator'], $code_arr).$this->set_timestamp($options);
 	}
 
-	protected function set_timestamp()
+	protected function set_timestamp($options)
 	{
 		$timestamp =  new \DateTime();
-		return $timestamp->getTimestamp();
+
+		return $options['timestamp'] ? $options['separator'].$timestamp->getTimestamp() : '' ;
 	}
 
 }

@@ -58,10 +58,20 @@ $(function () {
         startView: 2,
         minView: 2,
         forceParse: 0
+    }).on('changeDate', function(ev){
+        if ($(this).hasClass('update-the-hour'))
+        {
+            var form_group = $(this).parents('div.form-group'),
+                hour_input = form_group.find('div'+$(this).attr('data-hour-target'));
+            if (hour_input.length)
+            {
+                var selected_hour = hour_input.find('input').val().length ? hour_input.find('input').val() : '00:00';
+                hour_input.datetimepicker('update', new Date($(this).find('input').val()+' '+selected_hour));
+            }
+        }
     });
     $('.input-datetime-only-hour').datetimepicker({
-        weekStart: 1,
-        todayBtn:  1,
+        weekStart: 0,
         autoclose: 1,
         todayHighlight: 1,
         startView: 1,

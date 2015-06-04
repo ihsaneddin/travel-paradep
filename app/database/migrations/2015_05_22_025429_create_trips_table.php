@@ -19,9 +19,12 @@ class CreateTripsTable extends Migration {
 			$table->integer('route_id')->unsigned();
 			$table->integer('driver_id')->unsigned()->nullable();
 			$table->integer('travel_car_id')->unsigned()->nullable();
-			$table->dateTime('departure_time');
-			$table->dateTime('arrival_time');
-			$table->float('durations');
+			$table->date('departure_date');
+			$table->time('departure_hour');
+			$table->date('arrival_date');
+			$table->time('arrival_hour');
+			$table->integer('quota')->unsigned();
+			$table->string('durations', 50);
 			$table->string('state', 100)->nullable();
 			$table->timestamps();
 		});

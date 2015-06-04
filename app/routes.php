@@ -34,8 +34,13 @@ Route::group(['namespace' => 'admin'], function(){
     });
 
     Route::group(array('prefix' => 'process', 'namespace' => 'process'), function(){
-      Route::resource('bookings', 'Bookings');
+      Route::resource('bookings', 'Bookings', array('only' => ['index', 'show', 'destroy']));
       Route::resource('trips', 'Trips');
+      Route::resource('trips.bookings', 'Bookings', array('only' => ['create', 'store', 'edit', 'update']));
+
+      #custom routes for bookings
+      Route::put('trips/{trips}/bookings/{bookings}/payment', array('as' => 'admin.process.trips.bookings.payment', 'uses' => 'Bookings@paid'));
+      Route::put('trips/{trips}/bookings/{bookings}/cancel', array('as' => 'admin.process.trips.bookings.cancel', 'uses' => 'Bookings@cancel'));
     });
 
   });

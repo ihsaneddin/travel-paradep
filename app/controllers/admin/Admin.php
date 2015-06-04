@@ -84,4 +84,20 @@ class Admin extends \BaseController {
 		return Response::json(null, $this->status);
 	}
 
+	public function categories()
+	{
+		$this->options['categories'] = \Category::ClassListSelectInput();
+	}
+
+	public function stations()
+	{
+		$this->options['stations'] =  \Station::stationListSelectOptions();
+	}
+
+	public function filter_params()
+	{
+		$filter = Input::get('filter');
+		return empty($filter) ? array() : $filter;
+	}
+
 }

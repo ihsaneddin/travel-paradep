@@ -117,16 +117,6 @@ class Routes extends Admin {
 		return $this->save('edit');
 	}
 
-	public function categories()
-	{
-		$this->options['categories'] = \Category::ClassListSelectInput();
-	}
-
-	public function stations()
-	{
-		$this->options['stations'] =  \Station::stationListSelectOptions();
-	}
-
 	protected function datatable()
 	{
 		return Table::table()->addColumn('Name', 'Code', 'From', 'Destination', 'Category','Price', 'Action')

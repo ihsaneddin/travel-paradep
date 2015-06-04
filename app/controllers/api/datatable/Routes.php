@@ -42,7 +42,7 @@ class Routes extends Api {
 	        ->addColumn('action', function($route){
 	        	$str = '<div class="btn-group action">
                     		<a href="'.route('admin.master.routes.edit', ['routes' => $route->id]).'" class="btn btn-default btn-xs new-modal-form"  data-target="modal-edit-route-'.$route->id.'""><i class="icon icon-pencil"></i></a>
-                    		<a id = "delete-record-'.$route->id.'" href="'.route('admin.master.routes.destroy', ['routes' => $route->id]).'" class="btn btn-default btn-delete btn-xs delete-table-record" onclick="deleteRowRecord(event,this);" data-method="delete"><i class="icon icon-trash"></i></a>
+                    		<a id = "delete-record-'.$route->id.'" href="'.route('admin.master.routes.destroy', ['routes' => $route->id]).'" class="btn btn-default btn-delete btn-xs delete-table-record confirm" data-method="delete"><i class="icon icon-trash"></i></a>
                 		</div>';
                 return $str;
 	        })

@@ -13,8 +13,8 @@ class AddFromAndDestinationToRoutes extends Migration {
 	public function up()
 	{
 		Schema::table('routes',function(Blueprint $table){
-			$table->integer('departure');
-			$table->integer('destination');
+			$table->integer('departure_id');
+			$table->integer('destination_id');
 		});
 
 	}
@@ -27,8 +27,8 @@ class AddFromAndDestinationToRoutes extends Migration {
 	public function down()
 	{
 		Schema::table('routes',function(Blueprint $table){
-			$table->dropColumn('destination');
-			$table->dropColumn('departure');
+			$table->dropColumn('destination_id');
+			$table->dropColumn('departure_id');
 		});
 	}
 

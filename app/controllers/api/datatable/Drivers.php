@@ -33,7 +33,7 @@ class Drivers extends Api {
 	        ->addColumn('action', function($driver){
 	        	$str = '<div class="btn-group action">
                     		<a href="'.route('admin.master.drivers.edit', ['drivers' => $driver->id]).'" class="btn btn-default btn-xs new-modal-form"  data-target="modal-edit-driver-'.$driver->id.'" "><i class="icon icon-pencil"></i></a>
-                    		<a id = "delete-record-'.$driver->id.'" href="'.route('admin.master.drivers.destroy', ['drivers' => $driver->id]).'" class="btn btn-default btn-delete btn-xs delete-table-record" onclick="deleteRowRecord(event,this);" data-method="delete"><i class="icon icon-trash"></i></a>
+                    		<a id = "delete-record-'.$driver->id.'" href="'.route('admin.master.drivers.destroy', ['drivers' => $driver->id]).'" class="btn btn-default btn-delete btn-xs delete-table-record confirm" data-method="delete"><i class="icon icon-trash"></i></a>
                 		</div>';
                 return $str;
 	        })

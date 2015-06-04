@@ -44,7 +44,7 @@ function confirmationModal(text,data)
 	}
 }
 
-//function to set confirmation modal type ased on requested http method
+//function to set confirmation modal type based on requested http method
 function confirmationModalType(type)
 {
 	var text = {};
@@ -191,6 +191,11 @@ function submitModalForm(submit)
 	      	});
 	      }
 
+	      if  (form.data('update-list-table'))
+	      {
+	      	update_selected_list_table($('table'+form.data('update-list-table')),request);
+	      }
+
 	      clearPasswordFields(form);
 	      clearErrorsValidation(form);
 
@@ -320,11 +325,198 @@ function provideManufacture(form, car)
   	});
 }
 
+function paginate(element)
+{
+	var url = element.attr('href');
+	 		$.ajax({
+			dataType : 'json',
+			url : url,
+			type : 'get',
+			success: function(request)
+			{
+				var container = $('div#table-index');
+				if (container.length)
+				{
+					append_table_index(container,request);
+					var pagination = $('div#table-index .box-pagination ul.pagination'),
+						simple_container = $('div#simple-pagination');
+					simple_paginate(simple_container, pagination);
+				}
+			}
+		});
+}
+
+function simple_paginate(container, source_pagination)
+{
+	if (container.length)
+	{
+		var simple_next = container.find('a.simple-next'),
+			simple_prev = container.find('a.simple-prev'),
+			next_link = source_pagination.find('li a[rel=next]'),
+			prev_link = source_pagination.find('li a[rel=prev]'),
+			current_page = source_pagination.find('li.active span').text();
+		next_link.length ? simple_next.attr('href', next_link.attr('href')) : simple_next.attr('href', '');
+		prev_link.length ? simple_prev.attr('href', prev_link.attr('href')) : simple_prev.attr('href', '');
+		container.find('a').each(function(){
+			$(this).attr('href').length ? $(this).removeAttr('disabled') : $(this).attr('disabled', 'disabled');
+		});
+		current_page.length ? container.find('.current-page').text(current_page) : null ;
+
+	}
+}
+
+function ajax_filter_index(form)
+{
+	var method = form.attr('method'),
+	 	url = form.attr('action'),
+	 	data = form.serialize();
+	$.ajax({
+		dataType: 'json',
+		url: url,
+		type: method,
+		data: data,
+    	error: function(request){
+    		notify({ 'type' : 'error', 'message' : 'Something is not right. Please try again.', 'title' : 'Error'});
+    	},
+    	success: function(request){
+    		var container = $('div#table-index');
+    		append_table_index(container,request);
+			var pagination =  container.find('.box-pagination ul.pagination'),
+				simple_container = $('div#simple-pagination');
+			simple_paginate(simple_container, pagination);
+    	}
+    });
+}
+
+function append_table_index(container, table)
+{
+	container.html(table);
+}
+
+function update_selected_list_table(table,data)
+{
+  var td = get_value_of_td(data, th_attributes(table)),
+  	  tr = table.find('tbody tr:first');
+
+  if (table.data('multiple'))
+  {
+  	append_tr(table,td,data);
+  }
+  else{
+  	replace_tr(table,tr,td);
+  }
+
+}
+
+function th_attributes(table)
+{
+	var attributes = [];
+	table.find('th').each(function(){
+    	attributes.push($(this).data('attribute'));
+  	});
+  	return attributes;
+}
+
+function get_value_of_td(data,attributes)
+{
+	var td = [];
+	for (var i = 0; i < attributes.length; i++) {
+	    var push = false,
+	    	value,
+	    	index = attributes[i].split('.'),
+	    	actual_data = data;
+	    for(var j=0; j < index.length; j++){
+	    	actual_data = push ? value : actual_data;
+	    	if (actual_data.hasOwnProperty(index[j]))
+	    	{
+	    		value = actual_data[index[j]];
+	    		push = true;
+	    	}
+	    	if (index[j] == 'action')
+	    	{
+	    		value = 'action';
+	    		push = true;
+	    	}
+	    }
+	    if (push)
+	    	td.push(value);
+	 }
+	 return td;
+}
+
+function replace_tr(table,tr,td)
+{
+	var i = 0;
+	console.log(tr);
+    tr.find('td').each(function(){
+      $(this).text(td[i]);
+      i++;
+    });
+}
+
+function append_tr(table,td,data)
+{
+	var i = 0,
+		_td = [];
+	if (table.find('tr.no-record').length)
+		table.find('tr.no-record').remove();
+	table.find('thead th').each(function(){
+		if (td[i] == 'action')
+		{
+			var th = table.find('th[data-attribute=action]');
+			if (th.length)
+			{
+				_td.push('<td>'+set_action_button(th, data)+'</td>');
+			}
+		}else
+		{
+			_td.push('<td>'+td[i]+'</td>');
+		}
+		i++;
+	});
+	table.find('tbody:last-child').append('<tr>'+_td.join('')+'</tr>');
+
+}
+
+function set_action_button(th, data)
+{
+	var table = th.parents('table'),
+		action_buttons = '';
+	if ((table.attr('id') == 'trip-passengers-table-list') || (table.attr('id') == 'table-bookings-index') )
+	{
+		var cancel = th.data('action-cancel');
+		if (cancel)
+		{
+			cancel = cancel.replace('trip_id', data.trip.id);
+			cancel = cancel.replace('booking_id', data.id);
+			action_buttons = action_buttons+' '+cancel;
+		}
+	}
+	return action_buttons;
+
+}
+
 //all event listeners are declared here
 
 $(document).ready(function(event){
+
+	//simple pagination
+	var simple_container = $('div#simple-pagination'),
+		pagination = $('div#table-index .box-pagination ul.pagination');
+	simple_paginate(simple_container,pagination);
+
+	//generate confirmation
+
+	$(document).on('click', '.confirm', function(e){
+		var data = { 'href' : $(this).attr('href'), 'target' : $(this).attr('id'), 'method' : $(this).data('method')};
+		confirmationModal(confirmationModalType('delete'),data);
+		e.preventDefault();
+		return false;
+
+	});
+
 	//listen to confirmation
-	$(".confirmation-button").click(function(e){
+	$(document).on('click', ".confirmation-button", function(e){
 		var url = $(this).attr('data-href');
 		var rowLink = $(this).attr('data-target');
 		var method = $(this).attr('data-method');
@@ -397,6 +589,22 @@ $(document).ready(function(event){
         });
 
 	 $('#panelScroll').slimscroll();
+
+	 $(document).on('click', '.box-pagination ul > li > a ', function(e){
+	 	paginate($(this));
+	 	e.preventDefault();
+	 });
+
+	 $(document).on('click', '.simple-paginate', function(e){
+	 	paginate($(this));
+	 	e.preventDefault();
+	 });
+
+	 $(document).on('click', '.submit-form-filter', function(e){
+	 	var form = $(this).parents('form.form-filter');
+	 	ajax_filter_index(form);
+	 	e.preventDefault();
+	 })
 
 });
 

@@ -24,25 +24,60 @@ class Trips extends Admin {
 	{
 		parent::__construct();
 		$this->beforeFilter('@routes', array('only' =>
-                            array('create','store','edit','update')));
+                            array('create','store','edit','update', 'index')));
 		$this->beforeFilter('@drivers', array('only' =>
-                            array('create','store','edit','update')));
+                            array('create','store','edit','update', 'index','show')));
 		$this->beforeFilter('@cars', array('only' =>
-                            array('create','store','edit','update')));
+                            array('create','store','edit','update','index', 'show')));
+		$this->beforeFilter('@categories', array('only' =>
+                            array('index')));
+		$this->beforeFilter('@stations', array('only' =>
+                            array('index')));
 	}
 
 	public function index()
 	{
-		$trips = Trip::filter(Input::get('filter'))->paginate(20);
-		$this->layout->nest('content', $this->view, ['trips' => $trips, 'options' => $this->options]);
+		$trips = Trip::filter($this->filter_params())->include()->paginate(1);
+		return $this->respondTo(
+			array('html'=> function() use ($trips)
+				 			{
+				 			 $this->layout->nest('content', $this->view, ['trips' => $trips, 'options' => $this->options]);
+				 			},
+				  'js' => function() use ($trips)
+				  		  {
+				  		  	 return View::make('admin.process.trips.table', array('trips' => $trips, 'options' => $this->options))->render();
+				  		  }
+				 )
+			);
 	}
 
 	public function show($id)
 	{
-
+		$this->layout->nest('content', $this->view, ['trip' => $this->resource, 'options' => $this->options]);
 	}
 
 	public function create()
+	{
+		return  $this->respondTo(
+			array('html'=> function()
+				 			{
+				 			 $this->layout->nest('content', $this->view, array('trip' => $this->resource, 'options' => $this->options));
+				 			},
+				  'js' => function()
+				  		  {
+				  		  	 $form = View::make($this->form, array('trip' => $this->resource, 'options' => $this->options))->render();
+				  		  	 return View::make('admin.shared.modal', array('body' => $form))->render();
+				  		  }
+				 )
+			);
+	}
+
+	public function store()
+	{
+		return $this->save('create');
+	}
+
+	public function edit($id)
 	{
 		return  $this->respondTo(
 			array('html'=> function()
@@ -58,16 +93,16 @@ class Trips extends Admin {
 			);
 	}
 
-	public function store()
+	public function update($id)
 	{
-		return $this->save('create');
+		return $this->save('edit');
 	}
 
 
 	public function routes()
 	{
 		$this->options['routes'] = \Rute::ListSelectInput();
-		$this->options['all_routes'] = \Rute::all()->toArray();
+		$this->options['all_routes'] = \Rute::with('category')->get()->toArray();
 	}
 
 	public function drivers()
@@ -84,7 +119,7 @@ class Trips extends Admin {
 
 	protected function save($method)
 	{
-		if ($this->resource->store(Input::all()) ){
+		if ($this->resource->store($this->trip_attributes()) ){
 			return $this->respondTo(
 	        	array(
 	        		'html' => function() use($method)
@@ -95,7 +130,7 @@ class Trips extends Admin {
 	        				  },
 	        		'js' => function()
 	        				{
-	        					return $this->resource->load('driver','route', 'departure', 'destination');
+	        					return $this->resource->load('driver', 'car', 'route', 'route.departure', 'route.destination');
 	        				}
 	        		)
 	        	);
@@ -114,6 +149,20 @@ class Trips extends Admin {
 	    			)
 	    		);
 		}
+	}
+
+	protected function trip_attributes()
+	{
+		$trip_attributes = Input::all();
+		if (array_key_exists('departure_date', $trip_attributes))
+		{
+			$trip_attributes['departure_date'] = format_date_time($trip_attributes['departure_date'], 'Y-m-d');
+		}
+		if (array_key_exists('arrival_date', $trip_attributes))
+		{
+			$trip_attributes['arrival_date'] = format_date_time($trip_attributes['arrival_date'], 'Y-m-d');
+		}
+		return $trip_attributes;
 	}
 
 

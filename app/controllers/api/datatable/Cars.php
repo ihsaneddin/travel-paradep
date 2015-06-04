@@ -48,7 +48,7 @@ class Cars extends Api {
         ->addColumn('action', function($car){
         	$str = '<div class="btn-group action">
                 		<a href="'.route('admin.master.cars.edit', ['cars' => $car->id]).'" class="btn btn-default btn-xs new-modal-form"  data-target="modal-edit-car-'.$car->id.'" "><i class="icon icon-pencil"></i></a>
-                		<a id = "delete-record-'.$car->id.'" href="'.route('admin.master.cars.destroy', ['cars' => $car->id]).'" class="btn btn-default btn-delete btn-xs delete-table-record" onclick="deleteRowRecord(event,this);" data-method="delete"><i class="icon icon-trash"></i></a>
+                		<a id = "delete-record-'.$car->id.'" href="'.route('admin.master.cars.destroy', ['cars' => $car->id]).'" class="btn btn-default btn-delete btn-xs delete-table-record confirm" data-method="delete"><i class="icon icon-trash"></i></a>
             		</div>';
             return $str;
         })

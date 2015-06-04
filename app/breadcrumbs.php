@@ -7,6 +7,10 @@ Breadcrumbs::register('master', function($breadcrumbs) {
     $breadcrumbs->parent('dashboards');
     $breadcrumbs->push('Master');
 });
+Breadcrumbs::register('process', function($breadcrumbs) {
+    $breadcrumbs->parent('dashboards');
+    $breadcrumbs->push('Process');
+});
 Breadcrumbs::register('admin.master.users.index', function($breadcrumbs) {
     $breadcrumbs->parent('master');
     $breadcrumbs->push('Users', route('admin.master.users.index'));
@@ -117,7 +121,7 @@ Breadcrumbs::register('admin.master.routes.update', function($breadcrumbs,$route
 	$breadcrumbs->push($route->code, route('admin.master.routes.edit',array('routes' => $route->id)));
 });
 Breadcrumbs::register('admin.process.trips.index', function($breadcrumbs){
-	$breadcrumbs->parent('master');
+	$breadcrumbs->parent('process');
 	$breadcrumbs->push('Trips', route('admin.process.trips.index'));
 });
 Breadcrumbs::register('admin.process.trips.show', function($breadcrumbs, $trip){
@@ -132,5 +136,27 @@ Breadcrumbs::register('admin.process.trips.store', function($breadcrumbs){
 	$breadcrumbs->parent('admin.process.trips.index');
 	$breadcrumbs->push('Create', route('admin.process.trips.create'));
 });
-
-
+Breadcrumbs::register('admin.process.trips.edit', function($breadcrumbs, $trip){
+	$breadcrumbs->parent('admin.process.trips.index');
+	$breadcrumbs->push($trip->code, route('admin.process.trips.edit',array('trips' => $trip->id)));
+});
+Breadcrumbs::register('admin.process.trips.update', function($breadcrumbs, $trip){
+	$breadcrumbs->parent('admin.process.trips.index');
+	$breadcrumbs->push($trip->code, route('admin.process.trips.edit',array('trips' => $trip->id)));
+});
+Breadcrumbs::register('admin.process.bookings.index', function($breadcrumbs){
+	$breadcrumbs->parent('process');
+	$breadcrumbs->push('Bookings', route('admin.process.bookings.index'));
+});
+Breadcrumbs::register('admin.process.bookings.show', function($breadcrumbs, $booking){
+	$breadcrumbs->parent('admin.process.bookings.index');
+	$breadcrumbs->push($booking->code, route('admin.process.bookings.show', array('bookings' => $booking->id)));
+});
+Breadcrumbs::register('admin.process.trips.bookings.create', function($breadcrumbs, $booking){
+	$breadcrumbs->parent('admin.process.trips.index');
+	$breadcrumbs->push('Create Booking', route('admin.process.trips.bookings.create', array('trips' => $booking->trip_id, 'bookings' => $booking->id)));
+});
+Breadcrumbs::register('admin.process.trips.bookings.store', function($breadcrumbs, $booking){
+	$breadcrumbs->parent('admin.process.trips.index');
+	$breadcrumbs->push('Create Booking', route('admin.process.trips.bookings.create', array('trips' => $booking->trip_id, 'bookings' => $booking->id)));
+});

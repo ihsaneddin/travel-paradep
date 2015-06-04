@@ -14,7 +14,7 @@ class Station extends Base
 
 	public function routes()
 	{
-		return $this->hasMany('Rute', 'departure');
+		return $this->hasMany('Rute', 'departure_id');
 	}
 
 	public function rules()

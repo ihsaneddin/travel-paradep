@@ -18,6 +18,7 @@ class CreateBookinsgsTable extends Migration {
 			$table->integer('passenger_id')->unsigned();
 			$table->integer('trip_id')->unsigned();
 			$table->string('code');
+			$table->integer('seat_no')->unsigned();
 			$table->boolean('paid')->default(false);
 			$table->timestamps();
 		});
