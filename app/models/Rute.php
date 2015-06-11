@@ -2,9 +2,9 @@
 
 class Rute extends Base
 {
-	protected $fillable = ['name', 'code', 'price', 'category_id', 'departure_id', 'destination_id'];
+	protected $fillable = ['name', 'code', 'price', 'category_id', 'departure_id', 'destination_id', 'durations'];
 	protected $table = 'routes';
-	protected $appends= array('destination_station', 'departure_station');
+	protected $appends= array('destination_station', 'departure_station', 'duration');
 
 	public function departure()
 	{
@@ -28,7 +28,8 @@ class Rute extends Base
 							  'price' => 'required|numeric',
 							  'departure_id' => 'required|different:destination_id',
 							  'destination_id' => 'required',
-							  'category_id' => 'required');
+							  'category_id' => 'required',
+							  'durations' => 'required|date_format:"H:i"');
 	}
 
 	public function getDestinationStationAttribute($val)
@@ -54,8 +55,9 @@ class Rute extends Base
 	}
 
 
-	public function scopeListSelectInput($res)
+	public function scopeListSelectInput($res, $departure_id)
 	{
+		$res = empty($departure_id) ? $res : $res->where('departure_id', '=', $departure_id);
 		$list = array();
 		foreach ($res->get() as $route) {
 			$list = array_add($list, $route->id, $route->code);
@@ -64,8 +66,10 @@ class Rute extends Base
 		return $list;
 	}
 
-
-
-
+	public function getDurationAttribute($val)
+	{
+		$time = new DateTime($this->durations);
+		return $time->format('H:i');
+	}
 
 }

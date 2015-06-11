@@ -21,15 +21,66 @@ class Admin extends \BaseController {
 	protected $errors;
 	protected $model;
 	protected $options = array();
+	protected $current_user;
+	protected $restrict_resource;
+	protected $station_id;
 
 
 	public function __construct()
 	{
 		$currentUrl = Request::url();
 		View::share('currentUrl', $currentUrl);
-		View::share('currentUser', Confide::user());
+		$this->setView();
+		$this->setResource();
+		$this->setCurrentUser();
+		$this->setStation();
+		View::share('currentUser', $this->current_user);
+		$this->beforeFilter('@restrictResource');
+	}
+
+	protected function setView()
+	{
 		$this->view = Route::current()->getName();
+	}
+
+	public function restrictResource($resource = null)
+	{
+		$resource = is_null($resource) ? $this->resource : $resource;
+		if (!$this->current_user->hasRole('super_admin'))
+		{
+			if (!empty($this->restrict_resource))
+			{
+				$restricts = explode('.', $this->restrict_resource);
+				$actual_resource = $resource;
+				foreach ($restricts as $def) {
+					if ($def != end($restricts))
+					{
+						$actual_resource = $actual_resource->$def()->first();
+					}else{
+						if ($actual_resource->$def != $this->station_id)
+						{
+							\App::abort(401, 'Not authenticated');
+						}
+					}
+
+				}
+			}
+		}
+	}
+
+	protected function setStation()
+	{
+		$this->station_id = $this->current_user->station_id;
+	}
+
+	protected function setResource()
+	{
 		$this->resource = $this->resource();
+	}
+
+	protected function setCurrentUser()
+	{
+		$this->current_user = Confide::user();
 	}
 
 	protected function setupLayout()

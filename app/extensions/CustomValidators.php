@@ -32,29 +32,28 @@ class CustomValidator extends \Illuminate\Validation\Validator {
     return false;
   }
 
-  public function validateTripValidArrivalDate($attribute, $value, $parameters)
+  public function validateTripValidDepartureDate($attribute, $value, $parameters)
   {
-    $departure_time =  DateTime::createFromFormat('Y-m-d H:i', array_get($this->data, 'departure_date').' '.array_get($this->data, 'departure_hour'));
-    if ($departure_time == false)
+    if (!empty($parameters))
     {
-      $departure_time =  DateTime::createFromFormat('Y-m-d H:i:s', array_get($this->data, 'departure_date').' '.array_get($this->data, 'departure_hour'));
-    }
-    $arrival_time = DateTime::createFromFormat('Y-m-d H:i', array_get($this->data, 'arrival_date').' '.array_get($this->data, 'arrival_hour'));
-    if ($arrival_time == false)
-    {
-      $arrival_time = DateTime::createFromFormat('Y-m-d H:i:s', array_get($this->data, 'arrival_date').' '.array_get($this->data, 'arrival_hour'));
-    }
-
-    if ($departure_time && $arrival_time)
-    {
-      if ($arrival_time > $departure_time)
+      $departure_time =  DateTime::createFromFormat('Y-m-d H:i', array_get($this->data, 'departure_date').' '.array_get($this->data, 'departure_hour'));
+      if ($departure_time == false)
       {
-        return true;
+        $departure_time =  DateTime::createFromFormat('Y-m-d H:i:s', array_get($this->data, 'departure_date').' '.array_get($this->data, 'departure_hour'));
+      }
+      $ori_departure_time =  DateTime::createFromFormat('Y-m-d H:i', $parameters[0]);
+      if ($ori_departure_time == false)
+      {
+        $ori_departure_time =  DateTime::createFromFormat('Y-m-d H:i:s', $parameters[0]);
+      }
+      if ($departure_time < $ori_departure_time)
+      {
+        $message = 'The current departure must be greater than departure time before. ';
+        $this->getMessageBag()->add($attribute, $message);
+        return false;
       }
     }
-    $message = 'The '.$attribute.' must be greater than departure time. ';
-    $this->getMessageBag()->add($attribute, $message);
-    return false;
+    return true;
   }
 
   public function validateValidTripCar($attribute, $value, $parameters)
@@ -62,9 +61,9 @@ class CustomValidator extends \Illuminate\Validation\Validator {
     $car = \TravelCar::find(array_get($this->data, 'travel_car_id'));
     if (!empty($car))
     {
-      if ($car->seat != array_get($this->data, 'quota'))
+      if ($car->seat < array_get($this->data, 'quota'))
       {
-        $message = 'Car\'s seat and trip quota must be equal';
+        $message = 'Car\'s seat must be equal or greater than quota';
         $this->getMessageBag()->add($attribute, $message);
         return false;
       }

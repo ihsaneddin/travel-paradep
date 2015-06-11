@@ -94,28 +94,6 @@
                 </div>
               </div>
 
-              <div class="form-group {{ Helpers::inputError($errors, 'arrival_date') }} {{ Helpers::inputError($errors, 'arrival_hour') }}">
-               {{ Form::label('arrival_date', 'Arrival Date', array('class' => 'col-md-2 control-label')) }}
-                <div class=" col-md-6">
-                  <div class="input-group date input-datetime-only-date update-the-hour" data-date="{{format_date_time($trip->arrival_date, 'd M Y')}}" data-date-format="dd MM yyyy" data-link-field="dummy_arrival_date" data-hour-target=".input-datetime-only-hour">
-                    {{ Form::text('arrival_date', is_null($trip->arrival_date) ? '' : format_date_time($trip->arrival_date, 'd M Y') , array('class' => 'form-control', 'id' => 'arrival_date')) }}
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-                  </div>
-                  <span class='help-inline'>
-                    {{ $errors->first('arrival_date') }}
-                  </span>
-                </div>
-                <div class="col-md-4">
-                  <div class="input-group date lala input-datetime-only-hour" data-date="{{ $trip->arrival_hour }}" data-date-format="hh:ii" data-link-field="dummy_arrival_hour">
-                    {{ Form::text('arrival_hour', is_null($trip->arrival_hour) ? '' : $trip->arrival_hour , array('class' => 'form-control', 'id' => 'arrival_hour')) }}
-                      <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
-                  </div>
-                  <span class='help-inline'>
-                    {{ $errors->first('arrival_hour') }}
-                  </span>
-                </div>
-              </div>
-
             </div>
         </div>
       </div>

@@ -15,8 +15,10 @@ class CreateSchedulesTable extends Migration {
 		Schema::create('schedules', function($table)
 		{
 			$table->increments('id');
-			$table->integer('hour');
-			$table->boolean('weekend')->default(true);
+			$table->time('hour');
+			$table->boolean('weekend')->default(false);
+			$table->integer('route_id')->unsigned();
+			$table->timestamps();
 		});
 	}
 

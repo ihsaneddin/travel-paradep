@@ -20,7 +20,7 @@ jQuery(document).ajaxStart(function (request)
 function deleteRowRecord(event,element)
 {
 	var data = { 'href' : $(element).attr('href'), 'target' : $(element).attr('id'), 'method' : 'delete'};
-	confirmationModal(confirmationModalType('delete'),data);
+	confirmationModal(confirmationModalType('delete', $(element).data('confirmation-message')),data);
 	event.preventDefault();
 	return false;
 }
@@ -32,7 +32,7 @@ function confirmationModal(text,data)
 	{
 		//set modal type
 		$('#modal-confirmation #confirmation-type').removeClass().addClass('alert alert-'+text['alert']);
-		$('#modal-confirmation .modal-body h4').text(text['confirm']);
+		$('#modal-confirmation .modal-body h4').html(text['confirm']);
 		$('#modal-confirmation .modal-content modal-footer .confirmation-button').text(text['button']);
 
 		//add data-href and data target to button confirm
@@ -45,12 +45,13 @@ function confirmationModal(text,data)
 }
 
 //function to set confirmation modal type based on requested http method
-function confirmationModalType(type)
+function confirmationModalType(type, message)
 {
+	message = message == undefined ? 'Are you sure?' : message;
 	var text = {};
 	switch (type.toLowerCase()){
 		case 'delete' :
-			text = { 'alert' : 'danger', 'confirm' : 'Are you sure?', 'button' : 'Delete' }
+			text = { 'alert' : 'danger', 'confirm' : message, 'button' : 'Delete' }
 		break;
 	}
 	return text;
@@ -196,6 +197,25 @@ function submitModalForm(submit)
 	      	update_selected_list_table($('table'+form.data('update-list-table')),request);
 	      }
 
+	      if (form.hasClass('append-first-tr') && form.data('table'))
+	      {
+	      	var table = $(form.data('table'));
+	      	if (table.length)
+	      	{
+	      		var tr = table.find('tbody tr:first');
+	      		append_tr(table,request);
+	      	}
+	      }
+	      if (form.hasClass('replace-tr') && form.data('table'))
+	      {
+	      		var table = $(form.data('table'));
+		      	if (table.length)
+		      	{
+		      		var tr = table.find('a[data-target='+form.attr('id')+']').parents('tr');
+		      		replace_tr(table,tr,request);
+		      	}
+	      }
+
 	      clearPasswordFields(form);
 	      clearErrorsValidation(form);
 
@@ -273,9 +293,24 @@ function newModalForm(event,element)
 				currentModal.find('.token-autocomplete').each(function(){
 					initAutocomplete($(this));
 				});
-				currentModal.find('form').attr('id', 'form-'+targetModal);
-				//add target attr to submit button
-				currentModal.find('.submit-modal-form').attr('data-target', ''+currentModal.find('form').attr('id'));
+				if (currentModal.find('form').length)
+				{
+					currentModal.find('form').attr('id', targetModal);
+					//add target attr to submit button
+					currentModal.find('.submit-modal-form').attr('data-target', ''+currentModal.find('form').attr('id'));
+					if ($(element).data('table'))
+					{
+						currentModal.find('form').attr('data-table', $(element).data('table'));
+					}
+					if ($(element).data('form-url'))
+					{
+						currentModal.find('form').attr('action', $(element).data('form-url'));
+					}
+
+				}else{
+					currentModal.find('.submit-modal-form').remove();
+				}
+
 				if (newForm) currentModal.addClass('new-object');
 
 				currentModal.modal('show');
@@ -306,7 +341,9 @@ function clearErrorsValidation(form)
 
 function initSelectize(element, options )
 {
-	element.selectize(options);
+	var select = element.selectize(options),
+		selectize = select[0].selectize;
+	return selectize;
 }
 
 function provideManufacture(form, car)
@@ -395,15 +432,14 @@ function append_table_index(container, table)
 
 function update_selected_list_table(table,data)
 {
-  var td = get_value_of_td(data, th_attributes(table)),
-  	  tr = table.find('tbody tr:first');
+  var tr = table.find('tbody tr:first');
 
   if (table.data('multiple'))
   {
-  	append_tr(table,td,data);
+  	append_tr(table,data);
   }
   else{
-  	replace_tr(table,tr,td);
+  	replace_tr(table,tr,data);
   }
 
 }
@@ -444,19 +480,27 @@ function get_value_of_td(data,attributes)
 	 return td;
 }
 
-function replace_tr(table,tr,td)
+function replace_tr(table,tr, data)
 {
-	var i = 0;
-	console.log(tr);
+	var i = 0,
+		td_data= get_value_of_td(data, th_attributes(table));;
     tr.find('td').each(function(){
-      $(this).text(td[i]);
+      if (td_data[i] == 'action')
+      {
+      	var th = table.find('th[data-attribute=action]');
+		if (th.length)
+		{
+			$(this).html(set_action_button(th, data));
+		}
+      }else {$(this).html(td_data[i]);}
       i++;
     });
 }
 
-function append_tr(table,td,data)
+function append_tr(table,data)
 {
 	var i = 0,
+		td = get_value_of_td(data),
 		_td = [];
 	if (table.find('tr.no-record').length)
 		table.find('tr.no-record').remove();
@@ -474,7 +518,7 @@ function append_tr(table,td,data)
 		}
 		i++;
 	});
-	table.find('tbody:last-child').append('<tr>'+_td.join('')+'</tr>');
+	table.find('tbody:last-child').prepend('<tr>'+_td.join('')+'</tr>');
 
 }
 
@@ -484,21 +528,78 @@ function set_action_button(th, data)
 		action_buttons = '';
 	if ((table.attr('id') == 'trip-passengers-table-list') || (table.attr('id') == 'table-bookings-index') )
 	{
+		var payment = th.data('action-payment');
+		if (payment && !data.paid)
+		{
+			payment = replaceAll(payment, 'trip_id', data.trip.id);
+			payment = replaceAll(payment, 'booking_id', data.id);
+			action_buttons = action_buttons+' '+payment;
+		}
+
 		var cancel = th.data('action-cancel');
 		if (cancel)
 		{
-			cancel = cancel.replace('trip_id', data.trip.id);
-			cancel = cancel.replace('booking_id', data.id);
+			cancel = replaceAll(cancel, 'trip_id', data.trip.id);
+			cancel = replaceAll(cancel, 'booking_id', data.id);
 			action_buttons = action_buttons+' '+cancel;
+		}
+
+		var show = th.data('action-show');
+		if (show)
+		{
+			show = replaceAll(show, 'booking_id', data.id);
+			action_buttons = action_buttons+' '+show;
+		}
+	}
+	if (table.attr('id') == 'table-schedules-index')
+	{
+		edit = th.data('action-edit')
+		if (edit)
+		{
+			edit = replaceAll(edit, 'schedule_id', data.id);
+			action_buttons = action_buttons+' '+edit;
 		}
 	}
 	return action_buttons;
 
 }
 
+function escapeRegExp(string) {
+    return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+}
+
+function replaceAll(string, find, replace) {
+  return string.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+}
+
+//from trip.js
+function update_button_selected(chosen)
+{
+  var tr = chosen.parents('tr'),
+      tbody = chosen.parents('tbody'),
+      i = chosen.find('i');
+  tbody.find('tr').removeClass('warning');
+  tbody.find('.select-trip-option').find('i').each(function(){
+    if ($(this).hasClass('icon-ok'))
+    {
+      $(this).removeClass('icon-ok');
+      $(this).addClass('icon-check');
+    }
+  });
+  i.removeClass('icon-check');
+  i.addClass('icon-ok');
+  tr.addClass('warning');
+}
+
 //all event listeners are declared here
 
 $(document).ready(function(event){
+
+	//submit modal form
+
+	$(document).on('click', 'button.submit-modal-form', function(){
+		submitModalForm(this);
+	});
 
 	//simple pagination
 	var simple_container = $('div#simple-pagination'),
@@ -509,7 +610,7 @@ $(document).ready(function(event){
 
 	$(document).on('click', '.confirm', function(e){
 		var data = { 'href' : $(this).attr('href'), 'target' : $(this).attr('id'), 'method' : $(this).data('method')};
-		confirmationModal(confirmationModalType('delete'),data);
+		confirmationModal(confirmationModalType('delete', $(this).data('confirmation-message')),data);
 		e.preventDefault();
 		return false;
 
@@ -517,9 +618,10 @@ $(document).ready(function(event){
 
 	//listen to confirmation
 	$(document).on('click', ".confirmation-button", function(e){
-		var url = $(this).attr('data-href');
-		var rowLink = $(this).attr('data-target');
-		var method = $(this).attr('data-method');
+		var confirmation_link = $(this),
+			url = confirmation_link.attr('data-href'),
+			rowLink = confirmation_link.attr('data-target'),
+			method = confirmation_link.attr('data-method');
 		$.ajax({
 			dataType : 'json',
 			url : url,
@@ -537,6 +639,35 @@ $(document).ready(function(event){
 						notify({ 'type' : 'success', 'message' : 'record deleted.', 'title' : 'Notice'});
 					}
 				}
+
+				if ((rowLink != undefined) && $('#'+rowLink).length && $('#'+rowLink).hasClass('change-state'))
+				{
+					var link = $('#'+rowLink);
+						td = link.parents('td'),
+						tr = td.parents('tr'),
+						table = tr.parents('table');
+					if (table != undefined && table.length)
+						replace_tr(table, tr, request);
+					$('#'+rowLink).remove();
+				}
+
+			},
+			error:function(request)
+			{
+				if (request.status == 422)
+				{
+					var errors = request.responseJSON;
+					jQuery.each(errors, function(field, errors) {
+						if ((field == 'state') || (field == 'paid'))
+						{
+							for (var i = errors.length - 1; i >= 0; i--) {
+								//if (i != errors.length - 1 )
+								notify({'type' : 'error', 'message' : errors[i], 'title' : 'Error', 'timeout' : 0});
+							};
+						}
+
+					});
+				}
 			}
 		});
 		e.preventDefault();
@@ -547,6 +678,11 @@ $(document).ready(function(event){
 	$('.submit-form').click(function(e){
 		if ($(this).attr('data-target') !== undefined)
 		{
+			var form = $('#'+$(this).attr('data-target'));
+			if ($(this).data('form-url'))
+			{
+				form.attr('action', $(this).data('form-url'));
+			}
 			$('#'+$(this).attr('data-target')).submit();
 		}
 		return false;

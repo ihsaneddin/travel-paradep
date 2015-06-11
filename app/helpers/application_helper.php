@@ -1,5 +1,10 @@
 <?php
 
+function current_user()
+{
+	return Confide::user();
+}
+
 
 function input_value($original,$edited)
 {
@@ -42,4 +47,19 @@ function format_date_time($date_string, $format = 'Y/m/d H:i:s')
 	{
 		return null;
 	}
+}
+
+function has_access_to($route, Array $transition = array())
+{
+	$accessable = false;
+	return $accessable;
+}
+
+function carbon_format($format=null, $time=null)
+{
+	if (is_null($time) || is_null($format))
+	{
+		return Carbon::now();
+	}
+	return Carbon::createFromFormat($format, $time);
 }

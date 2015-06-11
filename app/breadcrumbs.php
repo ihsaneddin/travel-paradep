@@ -48,6 +48,14 @@ Breadcrumbs::register('admin.master.cars.show', function($breadcrumbs,$car){
 	$breadcrumbs->parent('admin.master.cars.index');
 	$breadcrumbs->push($car->model->name, route('admin.master.cars.show', array('cars' => $car->id)));
 });
+Breadcrumbs::register('admin.master.cars.edit_stationed_at', function($breadcrumbs,$car){
+	$breadcrumbs->parent('admin.master.cars.index');
+	$breadcrumbs->push("Edit ".$car->code."'s Station", route('admin.master.cars.edit_stationed_at',array('cars'=>$car->id)));
+});
+Breadcrumbs::register('admin.master.cars.stationed_at', function($breadcrumbs,$car){
+	$breadcrumbs->parent('admin.master.cars.index');
+	$breadcrumbs->push("Edit ".$car->code."'s Station", route('admin.master.cars.edit_stationed_at',array('cars'=>$car->id)));
+});
 Breadcrumbs::register('admin.master.stations.index', function($breadcrumbs) {
     $breadcrumbs->parent('master');
     $breadcrumbs->push('Stations', route('admin.master.stations.index'));
@@ -95,6 +103,14 @@ Breadcrumbs::register('admin.master.drivers.edit', function($breadcrumbs,$driver
 Breadcrumbs::register('admin.master.drivers.update', function($breadcrumbs,$driver){
 	$breadcrumbs->parent('admin.master.drivers.index');
 	$breadcrumbs->push("Edit ".$driver->code, route('admin.master.drivers.edit',array('drivers'=>$driver->id)));
+});
+Breadcrumbs::register('admin.master.drivers.edit_stationed_at', function($breadcrumbs,$driver){
+	$breadcrumbs->parent('admin.master.drivers.index');
+	$breadcrumbs->push("Edit ".$driver->code."'s Station", route('admin.master.drivers.edit_stationed_at',array('drivers'=>$driver->id)));
+});
+Breadcrumbs::register('admin.master.drivers.stationed_at', function($breadcrumbs,$driver){
+	$breadcrumbs->parent('admin.master.drivers.index');
+	$breadcrumbs->push("Edit ".$driver->code."'s Station", route('admin.master.drivers.edit_stationed_at',array('drivers'=>$driver->id)));
 });
 Breadcrumbs::register('admin.master.routes.index', function($breadcrumbs){
 	$breadcrumbs->parent('master');
@@ -159,4 +175,52 @@ Breadcrumbs::register('admin.process.trips.bookings.create', function($breadcrum
 Breadcrumbs::register('admin.process.trips.bookings.store', function($breadcrumbs, $booking){
 	$breadcrumbs->parent('admin.process.trips.index');
 	$breadcrumbs->push('Create Booking', route('admin.process.trips.bookings.create', array('trips' => $booking->trip_id, 'bookings' => $booking->id)));
+});
+Breadcrumbs::register('admin.master.schedules.index', function($breadcrumbs){
+	$breadcrumbs->parent('master');
+	$breadcrumbs->push('Schedules', route('admin.master.schedules.index'));
+});
+Breadcrumbs::register('admin.master.schedules.show', function($breadcrumbs,$schedule){
+	$breadcrumbs->parent('admin.master.schedules.index');
+	$breadcrumbs->push('Schedule', route('admin.master.schedules.show',array('schedules' => $schedule->id)));
+});
+Breadcrumbs::register('admin.master.schedules.create', function($breadcrumbs){
+	$breadcrumbs->parent('admin.master.schedules.index');
+	$breadcrumbs->push("Create", route('admin.master.schedules.create'));
+});
+Breadcrumbs::register('admin.master.schedules.store', function($breadcrumbs){
+	$breadcrumbs->parent('admin.master.schedules.index');
+	$breadcrumbs->push("Create", route('admin.master.schedules.create'));
+});
+Breadcrumbs::register('admin.master.schedules.edit', function($breadcrumbs,$schedule){
+	$breadcrumbs->parent('admin.master.schedules.index');
+	$breadcrumbs->push("Edit Schedule", route('admin.master.schedules.edit',array('schedules'=>$schedule->id)));
+});
+Breadcrumbs::register('admin.master.schedules.update', function($breadcrumbs,$schedule){
+	$breadcrumbs->parent('admin.master.schedules.index');
+	$breadcrumbs->push("Edit Schedule", route('admin.master.schedules.edit',array('schedules'=>$schedule->id)));
+});
+Breadcrumbs::register('admin.process.schedules.index', function($breadcrumbs){
+	$breadcrumbs->parent('process');
+	$breadcrumbs->push('Schedules', route('admin.process.schedules.index'));
+});
+Breadcrumbs::register('admin.process.schedules.show', function($breadcrumbs,$schedule){
+	$breadcrumbs->parent('admin.process.schedules.index');
+	$breadcrumbs->push('Schedule', route('admin.process.schedules.show',array('schedules' => $schedule->id)));
+});
+Breadcrumbs::register('admin.process.schedules.create', function($breadcrumbs){
+	$breadcrumbs->parent('admin.process.schedules.index');
+	$breadcrumbs->push("Create", route('admin.process.schedules.create'));
+});
+Breadcrumbs::register('admin.process.schedules.store', function($breadcrumbs){
+	$breadcrumbs->parent('admin.process.schedules.index');
+	$breadcrumbs->push("Create", route('admin.process.schedules.create'));
+});
+Breadcrumbs::register('admin.process.schedules.edit', function($breadcrumbs,$schedule){
+	$breadcrumbs->parent('admin.process.schedules.index');
+	$breadcrumbs->push("Edit Schedule", route('admin.process.schedules.edit',array('schedules'=>$schedule->id)));
+});
+Breadcrumbs::register('admin.process.schedules.update', function($breadcrumbs,$schedule){
+	$breadcrumbs->parent('admin.process.schedules.index');
+	$breadcrumbs->push("Edit Schedule", route('admin.process.schedules.edit',array('schedules'=>$schedule->id)));
 });

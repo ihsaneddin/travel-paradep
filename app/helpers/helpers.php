@@ -20,12 +20,14 @@ class Helpers {
 
 	public static function tableTitle()
 	{
-		return '<h3 class="panel-title pull-left"> '.ucfirst(self::currentResource()['function']).' '.ucfirst(self::currentResource()['controller']).'</h3>';
+		$function = implode(' ', explode('_', self::currentResource()['function'])).' '.ucfirst(self::currentResource()['controller']);
+		return '<h3 class="panel-title pull-left"> '.$function.'</h3>';
 	}
 
 	static function modalTitle()
 	{
-		return '<h4 class="modal-title">'.ucfirst(self::currentResource()['function']).' '.ucfirst(self::currentResource()['controller']).'</h4>';
+		$function = implode(' ', explode('_', self::currentResource()['function'])).' '.ucfirst(self::currentResource()['controller']);
+		return '<h4 class="modal-title">'.ucfirst($function).'</h4>';
 	}
 
 	public static function currentResource()

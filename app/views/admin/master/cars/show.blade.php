@@ -14,6 +14,8 @@
 
                           {{Helpers::link_to('admin.master.cars.edit', '<i class="icon icon-pencil"></i>', ['cars' => $car->id],['class' => 'btn btn-default new-modal-form', 'data-target' => 'modal-edit-car-'.$car->id ])}}
 
+                          {{Helpers::link_to('admin.master.cars.edit_stationed_at', '<i class="icon icon-screenshot"></i>', ['cars' => $car->id],['class' => 'btn btn-default new-modal-form', 'data-target' => 'modal-edit-stationed-car-'.$car->id, 'data-form-url' => route('admin.master.cars.stationed_at', array('cars' => $car->id)) ])}}
+
                           <a href="#car-photos-upload-modal" class="btn btn-default" data-toggle='modal'>
                             <i class='icon icon-upload'></i>
                           </a>

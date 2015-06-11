@@ -53,6 +53,19 @@
               </div>
             </div>
 
+            <div class="form-group {{ Helpers::inputError($errors, 'durations') }}">
+               {{ Form::label('durations', 'Duration', array('class' => 'col-md-2 control-label')) }}
+                <div class="col-md-6">
+                  <div class="input-group date lala input-datetime-only-hour" data-date="{{ $route->durations }}" data-date-format="hh:ii" data-link-field="dummy_arrival_hour">
+                    {{ Form::text('durations', is_null($route->durations) ? '' : $route->durations , array('class' => 'form-control', 'id' => 'durations')) }}
+                      <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
+                  </div>
+                  <span class='help-inline'>
+                    {{ $errors->first('durations') }}
+                  </span>
+                </div>
+              </div>
+
           </div>
       </div>
     </div>
@@ -71,6 +84,7 @@
         </div>
 
         <div class="panel-body">
+
           <div class="form-group {{ Helpers::inputError($errors, 'departure_id') }}">
             {{ Form::label('departure_id', 'Departure', array('class' => 'col-md-2 control-label')) }}
             <div class="col-md-10">
@@ -115,5 +129,18 @@
           }
         });
       });
+
+      $('.input-datetime-only-hour').datetimepicker({
+          weekStart: 0,
+          autoclose: 1,
+          todayHighlight: 1,
+          startView: 1,
+          minView: 2,
+          maxView: 2,
+          forceParse: 0
+      });
+
+      $('.datetimepicker-hours').find('thead tr th').addClass('visibility-hidden');
+
     });
 </script>

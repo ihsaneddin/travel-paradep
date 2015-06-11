@@ -6,7 +6,7 @@ use interfaces\NestedAttributesInterface;
 use interfaces\ValidatorInterface;
 use traits\CodeAble;
 use observers\BaseObserver;
-
+use \Confide;
 
 class Base extends Eloquent implements NestedAttributesInterface,ValidatorInterface
 {
@@ -23,5 +23,6 @@ class Base extends Eloquent implements NestedAttributesInterface,ValidatorInterf
         parent::boot();
         self::observe(new BaseObserver());
     }
+
 
 }

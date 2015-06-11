@@ -194,7 +194,8 @@ return array(
 		'View'            => 'Illuminate\Support\Facades\View',
 		'Confide'         => 'Zizaco\Confide\Facade',
 		'Table'			  => 'Chumper\Datatable\Facades\DatatableFacade',
-		'Breadcrumbs' => 'DaveJamesMiller\Breadcrumbs\Facade'
+		'Breadcrumbs'	  => 'DaveJamesMiller\Breadcrumbs\Facade',
+		'Carbon'		  => 'Carbon\Carbon'
 
 	),
 

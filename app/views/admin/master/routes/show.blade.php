@@ -32,6 +32,8 @@
                           <dd>: {{ $route->departure_station }}</dd>
                           <dt>Destination</dt>
                           <dd>: {{ $route->destination_station }}</dd>
+                          <dt>Durations</dt>
+                          <dd>: {{ $route->duration }}</dd>
                       </dl>
                     </div>
                     <div class="col-md-6">

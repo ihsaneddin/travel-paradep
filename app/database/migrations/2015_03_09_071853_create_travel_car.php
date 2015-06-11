@@ -26,6 +26,7 @@ class CreateTravelCar extends Migration {
 			$table->integer('owner_id')->unsigned();
 			$table->integer('seat')->unsigned();
 			$table->string('state',50)->nullable();
+			$table->time('trip_hours');
 			$table->timestamps();
 		});
 	}

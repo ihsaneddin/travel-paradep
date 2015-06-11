@@ -1,7 +1,7 @@
 <?php
 namespace confide;
 class PermissionFilter {
-    
+
     public function filter($route, $request)
     {
         $user = \Confide::user();
@@ -10,10 +10,10 @@ class PermissionFilter {
         {
             foreach($user->roles as $role) {
             $permited = $role->hasPermission($route->getName());
-        }   
-        }   
+        }
+        }
         if(!$permitted) {
-            return Redirect::route('user.denied');
+            return \App::abort(403, 'Unauthorized action.');
         }
     }
 }

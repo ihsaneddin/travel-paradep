@@ -10,10 +10,10 @@ use \Redirect;
 use \App;
 use \Session;
 use \Address;
-use \Illuminate\Session\Store;
-use \Illuminate\Session\SessionServiceProvider;
+use traits\StationAbleControllerTrait;
 
 class Drivers extends Admin {
+	use StationAbleControllerTrait;
 
 	/**
 	 * Display a listing of the resource.
@@ -21,6 +21,13 @@ class Drivers extends Admin {
 	 * @return Response
 	 */
 	protected $form = 'admin.master.drivers.form';
+
+	public function __construct()
+	{
+		parent::__construct();
+		$this->beforeFilter('@stations', array('only' =>
+                            array('create','store','edit','update', 'edit_stationed_at', 'stationed_at')));
+	}
 
 	public function index()
 	{
@@ -112,7 +119,7 @@ class Drivers extends Admin {
 
 	private function datatable()
 	{
-		return Table::table()->addColumn('Name', 'Code', 'Drive Hours','Action')
+		return Table::table()->addColumn('Name', 'Code', 'Drive Hours', 'State', 'Stationed At', 'Action')
 							 ->setUrl(route('api.datatable.drivers.index'))
 							 ->noScript();
 	}

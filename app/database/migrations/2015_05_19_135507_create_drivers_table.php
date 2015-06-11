@@ -17,7 +17,7 @@ class CreateDriversTable extends Migration {
 			$table->increments('id');
 			$table->string('name', 50);
 			$table->string('code', 50);
-			$table->integer('drive_hours')->unsigned();
+			$table->time('drive_hours')->default('00:00:00');
 			$table->string('state',50)->nullable();
 			$table->timestamps();
 		});

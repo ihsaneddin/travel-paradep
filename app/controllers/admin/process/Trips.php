@@ -10,6 +10,9 @@ use \Redirect;
 use \App;
 use \Session;
 use \Trip;
+use \Rute;
+use \Driver;
+use \TravelCar;
 
 class Trips extends Admin {
 
@@ -19,6 +22,7 @@ class Trips extends Admin {
 	 * @return Response
 	 */
 	protected $form = 'admin.master.trips.form';
+	protected $restrict_resource = 'route.departure_id';
 
 	public function __construct()
 	{
@@ -33,6 +37,7 @@ class Trips extends Admin {
                             array('index')));
 		$this->beforeFilter('@stations', array('only' =>
                             array('index')));
+		$this->beforeFilter('@updateAllowed', array('only' => array('edit', 'update')));
 	}
 
 	public function index()
@@ -98,23 +103,89 @@ class Trips extends Admin {
 		return $this->save('edit');
 	}
 
+	public function ready($id)
+	{
+		return $this->change_state('set ready');
+	}
+
+	public function cancel($id)
+	{
+		return $this->change_state('cancel');
+	}
+
+	public function depart($id)
+	{
+		return $this->change_state('depart');
+	}
+
+	public function arrive($id)
+	{
+		return $this->change_state('arrive');
+	}
+
+	protected function change_state($transition)
+	{
+		if ($this->resource->apply($transition) ){
+			return $this->respondTo(
+	        	array(
+	        		'html' => function() use($transition)
+	        				  {
+	        				  	$notice = "Trip state has been changed.";
+	        				  	return Redirect::route('admin.process.trips.show', ['trips' => $this->resource->id])
+	            				->with('notice', $notice);
+	        				  },
+	        		'js' => function()
+	        				{
+	        					return $this->resource->load('driver', 'car', 'route', 'route.departure', 'route.destination');
+	        				}
+	        		)
+	        	);
+		}else{
+			return $this->respondTo(
+	    		array(
+	    			'html' => function() use($transition)
+	    					  {
+	    					  	$error = implode(', ', $this->resource->first('state'));
+	    					  	 return Redirect::route('admin.process.trips.show', ['trips' => $this->resource->id])
+	            				->with('error', $error);
+	    					  },
+	    			'js' => function()
+	        			{
+	        				return $this->resource->errors;
+	        			},
+	        	'status' => 422
+	    			)
+	    		);
+		}
+	}
+
 
 	public function routes()
 	{
-		$this->options['routes'] = \Rute::ListSelectInput();
-		$this->options['all_routes'] = \Rute::with('category')->get()->toArray();
+		$this->options['routes'] = Rute::ListSelectInput($this->station_id);
+		$routes = is_null($this->station_id) ? Rute::with('category') : Rute::where('departure_id', '=', $this->station_id)->with('category');
+		$this->options['all_routes'] = $routes->get()->toArray();
 	}
 
 	public function drivers()
 	{
-		$this->options['drivers'] = \Driver::ListSelectInput();
-		$this->options['all_drivers'] = \Driver::all()->toArray();
+		$this->options['drivers'] = Driver::ListSelectInput($this->station_id);
+		$drivers = is_null($this->station_id) ? Driver::all() : Driver::currentStation($this->station_id);
+		$this->options['all_drivers'] = $drivers->toArray();
 	}
 
 	public function cars()
 	{
-		$this->options['cars'] = \TravelCar::ListSelectInput();
-		$this->options['all_cars'] = \TravelCar::all()->toArray();
+		$this->options['cars'] = TravelCar::ListSelectInput($this->station_id);
+		$this->options['all_cars'] = TravelCar::all()->toArray();
+	}
+
+	public function updateAllowed()
+	{
+		if (!$this->resource->hasProperty('editable'))
+		{
+			\App::abort(401, 'Not authenticated');
+		}
 	}
 
 	protected function save($method)

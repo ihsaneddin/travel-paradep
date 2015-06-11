@@ -1,13 +1,44 @@
 <?php
 use Illuminate\Support\MessageBag;
 
-class Booking extends Base
+class Booking extends StatefulModel
 {
 	protected $table = 'bookings';
 	protected $fillable = ['passenger_id', 'trip_id', 'seat_no'];
 	protected $codeable = array('code' => array('trip.code','passenger.id'),
 								'timestamp' => false, 'separator' => '-' );
-	protected $appends = array('payment_status');
+	protected $appends = array('payment_status', 'pretty_state');
+
+	protected function stateMachineConfig()
+    {
+        return [
+            'states' => [
+                'commited' => [
+                    'type'       => 'initial',
+                    'properties' => ['editable' => true]
+                ],
+                'canceled' => [
+                	'type'		=> 'final',
+                    'properties' => []
+                ],
+                'completed' => [
+                	'type'    => 'final',
+                	'properties' => []
+                ]
+
+
+            ],
+            'transitions' => [
+            	'cancel' => ['from' => ['commited'], 'to' => 'canceled', 'guard' => null],
+            	'complete' => ['from' => ['commited'], 'to' => 'completed', 'guard' => null]
+            ],
+            'callbacks' => [
+                'after' => [
+                    ['from' => 'all', 'to' => 'all', 'do' => [$this, 'saveState']]
+                ]
+            ]
+        ];
+    }
 
 	public function passenger()
     {
@@ -61,6 +92,11 @@ class Booking extends Base
 		return $res;
 	}
 
+	public function scopeActive($res)
+	{
+		return $res->where('state', '<>', 'canceled')->get();
+	}
+
 	public function save_a_booking($params, $flag=false)
 	{
 		DB::beginTransaction();
@@ -72,6 +108,12 @@ class Booking extends Base
 			{
 				if (empty($passenger->errors))
 				{
+
+					if (array_get($params, 'paid'))
+					{
+						$this->paid = true;
+						$this->save();
+					}
 					DB::commit();
 					return true;
 				}
@@ -85,11 +127,26 @@ class Booking extends Base
 		return false;
 	}
 
+	public function setPayment()
+	{
+		if ($this->paid)
+		{
+			$this->attachError('paid', 'Booking is already paid!');
+			return false;
+		}
+		else
+		{
+			$this->paid = true;
+			$this->save();
+			return true;
+		}
+	}
+
 	public function usedSeatNo($used_seat = array())
 	{
 		if (!empty($this->trip))
 		{
-			$used_seat =  $this->trip->bookings->lists('seat_no');
+			$used_seat =  $this->trip->bookings()->active()->lists('seat_no');
 
 		}
 		return $used_seat;
@@ -115,6 +172,20 @@ class Booking extends Base
 		$type = $this->paid ? 'success' : 'danger' ;
 		$status = $this->paid ? "complete" : "not yet paid";
 		return '<button class="btn btn-'.$type.' btn-xs" disabled="">'.$status.'</button>';
+	}
+
+	public function getPrettyStateAttribute($val)
+	{
+		$type = 'warning';
+		switch ($this->getState()) {
+			case 'completed':
+				$type = "success";
+				break;
+			case 'canceled':
+				$type = "danger";
+				break;
+		}
+		return '<button class="btn btn-'.$type.' btn-xs" disabled="">'.ucwords($this->getState()).'</button>';
 	}
 
 }

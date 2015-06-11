@@ -21,15 +21,15 @@
   </thead>
   <tbody>
     @foreach($options['all_routes'] as $route)
-      <tr class=" {{ $trip->route_id == $route['id'] ? 'warning' : '' }}">
+      <tr class=" {{ $resource->route_id == $route['id'] ? 'warning' : '' }}">
         <td>{{ $route['name'] }}</td>
         <td>{{ $route['code'] }}</td>
         <td>{{ $route['departure_station'] }}</td>
         <td>{{ $route['destination_station'] }}</td>
         <td><span class="btn btn-xs btn-danger">{{ $route['category']['name'] }} </span></td>
         <td>
-          <a href="#" class="select-trip-option" data-target="#route_id" data-value="{{ $route['id'] }}" {{ $trip->route_id == $route['id'] ? 'disabled=""' : '' }}>
-            <i class="icon {{ $trip->route_id == $route['id'] ? 'icon-ok' : 'icon-check' }}"></i>
+          <a href="#" class="select-trip-option" data-target="#route_id" data-value="{{ $route['id'] }}" {{ $resource->route_id == $route['id'] ? 'disabled=""' : '' }}>
+            <i class="icon {{ $resource->route_id == $route['id'] ? 'icon-ok' : 'icon-check' }}"></i>
           </a>
         </td>
       </tr>

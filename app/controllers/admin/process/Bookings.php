@@ -17,12 +17,13 @@ class Bookings extends Admin {
 
 	protected $trip;
 	protected $form = 'admin.process.trips.bookings.form';
+	protected $restrict_resource = 'trip.route.departure_id';
 
 	public function __construct()
 	{
 		parent::__construct();
 		$this->beforeFilter('@trip', array('only' =>
-                            array('create','store')));
+                            array('create','store', 'move', 'cancel', 'payment')));
 		$this->beforeFilter('@avalaibleSeats', array('only' => array('create', 'store')));
 	}
 
@@ -140,12 +141,84 @@ class Bookings extends Admin {
 
 	public function payment($trip_id, $id)
 	{
-
+		if ($this->resource->setPayment() ){
+			return $this->respondTo(
+	        	array(
+	        		'html' => function()
+	        				  {
+	        				  	$notice = "Booking payment state has been changed.";
+	        				  	return Redirect::route('admin.process.bookings.show', ['bookings' => $this->resource->id])
+	            				->with('notice', $notice);
+	        				  },
+	        		'js' => function()
+	        				{
+	        					return $this->resource->load('passenger', 'trip', 'trip.route');
+	        				}
+	        		)
+	        	);
+		}else{
+			return $this->respondTo(
+	    		array(
+	    			'html' => function()
+	    					  {
+	    					  	 $error = implode(', ', $this->resource->first('state'));
+	    					  	 return Redirect::route('admin.process.bookings.show', ['bookings' => $this->resource->id])
+	            				->with('error', $error);
+	    					  },
+	    			'js' => function()
+	        			{
+	        				return $this->resource->errors;
+	        			},
+	        	'status' => 422
+	    			)
+	    		);
+		}
 	}
 
 	public function cancel($trip_id, $id)
 	{
+		return $this->change_state('cancel');
+	}
 
+	public function move($trip, $id)
+	{
+
+	}
+
+	protected function change_state($transition)
+	{
+		if ($this->resource->apply($transition) ){
+			return $this->respondTo(
+	        	array(
+	        		'html' => function() use($transition)
+	        				  {
+	        				  	$notice = "Booking state has been changed.";
+	        				  	return Redirect::route('admin.process.bookings.show', ['bookings' => $this->resource->id])
+	            				->with('notice', $notice);
+	        				  },
+	        		'js' => function()
+	        				{
+	        					return $this->resource->load('passenger', 'trip', 'trip.route');
+	        				}
+	        		)
+	        	);
+		}else{
+			return $this->respondTo(
+	    		array(
+	    			'html' => function() use($transition)
+	    					  {
+	    					  	 $error = implode(', ', $this->resource->first('state'));
+	    					  	 return Redirect::route('admin.process.bookings.show', ['bookings' => $this->resource->id])
+	            				->with('error', $error);
+	    					  },
+	    			'js' => function()
+	        			{
+	        				return $this->resource->errors;
+	        			},
+	        	'status' => 422
+	    			)
+	    		);
+		}
 	}
 
 	public function trip()
@@ -154,6 +227,10 @@ class Bookings extends Admin {
 		{
 			$this->trip = Trip::findOrfail(Route::current()->getParameter('trips'));
 			$this->resource->trip()->associate($this->trip);
+		}
+		if (!$this->resource->trip->hasProperty('editable'))
+		{
+			\App::abort(401, 'Not authenticated');
 		}
 	}
 

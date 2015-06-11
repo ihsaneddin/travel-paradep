@@ -14,8 +14,15 @@ class Users extends Admin {
 
 	protected $form = 'admin.master.users.form';
 
+	public function __construct()
+	{
+		parent::__construct();
+		$this->beforeFilter('@stations', array('only' =>
+                            array('create','store','edit','update')));
+	}
+
 	public function index()
-	{	
+	{
     	$this->layout->nest('content', $this->view, ['users' => $this->datatable()]);
 	}
 	/**
@@ -28,11 +35,11 @@ class Users extends Admin {
 		return  $this->respondTo(
 			array('html'=> function()
 				 			{
-				 			 $this->layout->nest('content', $this->view, ['user' => $this->resource]);
+				 			 $this->layout->nest('content', $this->view, ['user' => $this->resource, 'options' => $this->options]);
 				 			},
 				  'js' => function()
 				  		  {
-				  		  	 $form = View::make($this->form, array('user' => $this->resource))->render(); 
+				  		  	 $form = View::make($this->form, array('user' => $this->resource, 'options' => $this->options))->render();
 				  		  	 return View::make('admin.shared.modal', array('body' => $form))->render();
 				  		  }
 				 )
@@ -55,13 +62,13 @@ class Users extends Admin {
 	        				  {
 	        				  	return Redirect::route('admin.master.users.show', ['users' => $user->id])
 	            				->with('notice', 'User created');
-	        				  }, 
+	        				  },
 	        		'js' => function() use($user)
 	        				{
 	        					return $user->load('roles');
 	        				}
 	        		)
-	        	); 
+	        	);
 	    } else {
 	    	return $this->respondTo(
 	    		array(
@@ -73,7 +80,7 @@ class Users extends Admin {
 	    					  },
 	    			'js' => function() use ($user)
 	        			{
-	        				return $user->errors();	
+	        				return $user->errors();
 	        			},
 	        	'status' => 422
 	    			)
@@ -90,7 +97,19 @@ class Users extends Admin {
 	 */
 	public function show($id)
 	{
-		$this->layout->nest('content', $this->view, ['user' => $this->resource]);
+		return  $this->respondTo(
+			array('html'=> function()
+				 			{
+				 			$this->layout->nest('content', $this->view, ['user' => $this->resource]);
+				 			},
+				  'js' => function()
+				  		  {
+				  		  	 $form = View::make('admin.master.users.detail', array('user' => $this->resource))->render();
+				  		  	 return View::make('admin.shared.modal', array('body' => $form))->render();
+				  		  }
+				 )
+			);
+
 	}
 
 
@@ -109,7 +128,7 @@ class Users extends Admin {
 				 			},
 				  'js' => function()
 				  		  {
-				  		  	 $form = View::make($this->form, array('user' => $this->resource))->render(); 
+				  		  	 $form = View::make($this->form, array('user' => $this->resource))->render();
 				  		  	 return View::make('admin.shared.modal', array('body' => $form))->render();
 				  		  }
 				 )
@@ -125,7 +144,7 @@ class Users extends Admin {
 	 */
 	public function update($id)
 	{
-		
+
 	}
 
 
@@ -146,7 +165,7 @@ class Users extends Admin {
 
 	public function datatable()
 	{
-		return Table::table()->addColumn('Username', 'Email', 'Role','Last Login', 'Action')
+		return Table::table()->addColumn('Username', 'Station', 'Email', 'Role','Last Login', 'Action')
 							   ->setUrl(route('api.datatable.users.index'))
 							   ->noScript();
 	}

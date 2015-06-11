@@ -1,10 +1,13 @@
 <?php
 use observers\TravelCarObserver;
+use traits\StationAbleModelTrait;
 
-class TravelCar extends Base
+class TravelCar extends StatefulModel
 {
+	use StationAbleModelTrait;
+
 	protected $table = 'travel_cars';
-	protected $appends = array('merk','class', 'manufacture');
+	protected $appends = array('merk','class', 'manufacture', 'stationed_id', 'last_stationed_at', 'stationed_name');
 	protected $fillable = ['car_id', 'category_id', 'license_no', 'stnk_no', 'bpkb_no', 'seat'];
 	protected $acceptNestedAttributes = array('photos' => ['name', 'image']);
 
@@ -38,6 +41,16 @@ class TravelCar extends Base
 		return $this->belongsTo('Category');
 	}
 
+    public function addresses()
+	{
+		return $this->morphMany('Address', 'addressable');
+	}
+
+	public function stationeds()
+    {
+    	return $this->morphMany('Stationed', 'stationable');
+    }
+
 	function saveATravelCar($data)
 	{
 		if (array_key_exists('car_id', $data)) $data['car_id'] = $this->carModel($data['car_id'], $data['manufacture'])->id;
@@ -67,7 +80,7 @@ class TravelCar extends Base
 		return $model;
 	}
 
-	public function scopeListSelectInput($res)
+	public function scopeListSelectInput($res, $station_id)
 	{
 		$list = array();
 		$list = $res->lists('code', 'id');
@@ -100,6 +113,13 @@ class TravelCar extends Base
 		{
 			return $model->manufacture;
 		}
+	}
+
+	public function currentStation()
+	{
+		$current_station = $this->stationeds()->where('state', '=', 'active')->limit(1)->get()->first();
+		if (is_null($current_station)) {return null;}
+		return $current_station->station;
 	}
 
 }

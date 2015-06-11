@@ -12,7 +12,8 @@
 		"codesleeve/laravel-stapler": "1.0.*",
 		"laravelbook/ardent": "~2.4",
 		"symfony/var-dumper": "~2.6",
-		"yohang/finite": "~1.0"
+		"yohang/finite": "~1.0",
+		"nesbot/carbon": "1.14"
 	},
 	"autoload": {
 		"classmap": [

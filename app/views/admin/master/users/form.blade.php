@@ -1,19 +1,19 @@
 
-{{Form::model($user, ['route' => Helpers::createOrUpdateRoute($user), 
+{{Form::model($user, ['route' => Helpers::createOrUpdateRoute($user),
              'class' => 'form-and-autocomplete form form-horizontal update-data-table',
               'id' => 'user-form', 'method' => Helpers::createOrUpdateMethod($user)])}}
 
     <div class="form-group {{Helpers::inputError($errors, 'username')}}">
         {{Form::label('username',
-                      'Username', 
+                      'Username',
                       array('class' => 'col-md-2 control-label'))}}
-        
+
         <div class="col-md-10 ">
             {{Form::text('username',
-                         Input::old('username'), 
+                         Input::old('username'),
                          ['class' => 'form-control', 'placeholder' => 'User name']) }}
              <span class="help-inline">
-                {{ $errors->first('username') }}             
+                {{ $errors->first('username') }}
              </span>
         </div>
     </div>
@@ -26,7 +26,7 @@
                             $user->email,
                             ['class' => 'form-control', 'placeholder' => 'User email'] )}}
             <span class="help-inline">
-            {{ $errors->first('email') }}             
+            {{ $errors->first('email') }}
             </span>
         </div>
     </div>
@@ -37,7 +37,7 @@
             {{ Form::password('password',
                             ['class' => 'form-control', 'placeholder' => 'User password'] )}}
             <span class="help-inline">
-                {{ $errors->first('password') }}             
+                {{ $errors->first('password') }}
             </span>
         </div>
     </div>
@@ -48,23 +48,34 @@
             {{ Form::password('password_confirmation',
                             ['class' => 'form-control', 'placeholder' => 'Confirm Password'] )}}
             <span class="help-inline">
-                {{ $errors->first('password_confirmation') }}             
+                {{ $errors->first('password_confirmation') }}
              </span>
         </div>
     </div>
 
+    <div class="form-group {{ Helpers::inputError($errors, 'station_id') }}">
+      {{ Form::label('station', 'Station', array('class' => 'col-md-2 control-label')) }}
+      <div class="col-md-10">
+        {{ Form::select('station', $options['stations'], Input::old('station'),
+                        array('class' => 'form-control station-options', 'id' => 'station')) }}
+        <span class='help-inline'>
+          {{ $errors->first('station') }}
+        </span>
+      </div>
+    </div>
+
     <div class="form-group {{Helpers::inputError($errors, 'role_ids')}}">
         {{Form::label('role_ids',
-                      'Roles', 
+                      'Roles',
                       array('class' => 'col-md-2 control-label'))}}
-        
+
         <div class="col-md-10">
             {{Form::text('role_ids',
-                         '', 
+                         '',
                          ['class' => 'form-control token-autocomplete',
                           'placeholder' => 'Type a role']) }}
             <span class="help-inline">
-                {{ $errors->first('role_ids') }}             
+                {{ $errors->first('role_ids') }}
              </span>
         </div>
     </div>
@@ -79,3 +90,18 @@
     <span class='notify-success-text hidden'> User is successfully {{$user->exists() ? 'updated' : 'created'}}. </span>
 
 {{Form::close()}}
+
+<script>
+    $(document).ready(function(){
+
+      $('form#user-form').each(function(){
+        var form =$(this);
+        form.find('select').each(function(){
+          if ( !$(this).hasClass('selectized') )
+          {
+            initSelectize($(this), {create:false});
+          }
+        });
+      });
+    });
+</script>

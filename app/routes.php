@@ -31,16 +31,31 @@ Route::group(['namespace' => 'admin'], function(){
       Route::resource('routes', 'Routes');
       Route::resource('stations', 'Stations');
       Route::resource('drivers', 'Drivers');
+      Route::resource('schedules', 'Schedules');
+
+      // custom routes for masters
+      Route::get('cars/{cars}/edit_stationed_at', array('as' => 'admin.master.cars.edit_stationed_at', 'uses' => 'Cars@edit_stationed_at'));
+      Route::post('cars/{cars}/stationed_at', array('as' => 'admin.master.cars.stationed_at', 'uses' => 'Cars@stationed_at'));
+      Route::get('drivers/{drivers}/edit_stationed_at', array('as' => 'admin.master.drivers.edit_stationed_at', 'uses' => 'Drivers@edit_stationed_at'));
+      Route::post('drivers/{drivers}/stationed_at', array('as' => 'admin.master.drivers.stationed_at', 'uses' => 'Drivers@stationed_at'));
     });
 
     Route::group(array('prefix' => 'process', 'namespace' => 'process'), function(){
       Route::resource('bookings', 'Bookings', array('only' => ['index', 'show', 'destroy']));
       Route::resource('trips', 'Trips');
+      Route::resource('schedules', 'Schedules');
       Route::resource('trips.bookings', 'Bookings', array('only' => ['create', 'store', 'edit', 'update']));
 
+      #custom route for trips
+      Route::put('trips/{trips}/ready', array('as' => 'admin.process.trips.ready', 'uses' => 'Trips@ready'));
+      Route::put('trips/{trips}/cancel', array('as' => 'admin.process.trips.cancel', 'uses' => 'Trips@cancel'));
+      Route::put('trips/{trips}/depart', array('as' => 'admin.process.trips.depart', 'uses' => 'Trips@depart'));
+      Route::put('trips/{trips}/arrive', array('as' => 'admin.process.trips.arrive', 'uses' => 'Trips@arrive'));
+
       #custom routes for bookings
-      Route::put('trips/{trips}/bookings/{bookings}/payment', array('as' => 'admin.process.trips.bookings.payment', 'uses' => 'Bookings@paid'));
+      Route::put('trips/{trips}/bookings/{bookings}/payment', array('as' => 'admin.process.trips.bookings.payment', 'uses' => 'Bookings@payment'));
       Route::put('trips/{trips}/bookings/{bookings}/cancel', array('as' => 'admin.process.trips.bookings.cancel', 'uses' => 'Bookings@cancel'));
+      Route::put('bookings/{bookings}/move', array('as' => 'admin.process.bookings.move', 'use' => 'Bookings@move'));
     });
 
   });
@@ -64,6 +79,7 @@ Route::group(['namespace' => 'api', 'prefix' => 'api'], function()
     Route::resource('stations', 'Stations', ['only' => ['index']]);
     Route::resource('drivers', 'Drivers', ['only' => ['index']]);
     Route::resource('routes', 'Routes', ['only' => ['index']]);
+    Route::resource('schedules', 'Schedules', ['only' => ['index']]);
   });
 });
 

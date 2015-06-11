@@ -7,7 +7,7 @@
           {{ Helpers::modalTitle() }}
         </h4>
       </div>
-      
+
       <div class="modal-body">
         {{$body}}
       </div>
@@ -15,7 +15,7 @@
       <div class="modal-footer">
         <center>
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary btn-large submit-modal-form" onclick="submitModalForm(this)">Save</button>
+          <button type="button" class="btn btn-primary btn-large submit-modal-form">Save</button>
         </center>
       </div>
     </div>

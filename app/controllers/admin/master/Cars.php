@@ -1,5 +1,6 @@
 <?php
 namespace admin\master;
+
 use admin\Admin;
 use \Table;
 use \View;
@@ -9,12 +10,22 @@ use \Redirect;
 use \App;
 use \Car;
 use \Category;
+use traits\StationAbleControllerTrait;
 
 class Cars extends Admin {
+
+	use StationAbleControllerTrait;
 
 	protected $form = 'admin.master.cars.form';
 	protected $model = 'TravelCar';
 	protected $resources = array();
+
+	public function __construct()
+	{
+		parent::__construct();
+		$this->beforeFilter('@stations', array('only' =>
+                            array('create','store','edit','update', 'edit_stationed_at', 'stationed_at')));
+	}
 
 	public function index()
 	{
@@ -152,13 +163,6 @@ class Cars extends Admin {
 		}
 	}
 
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 
 
 }

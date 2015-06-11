@@ -24,7 +24,6 @@ class CreateTripsTable extends Migration {
 			$table->date('arrival_date');
 			$table->time('arrival_hour');
 			$table->integer('quota')->unsigned();
-			$table->string('durations', 50);
 			$table->string('state', 100)->nullable();
 			$table->timestamps();
 		});

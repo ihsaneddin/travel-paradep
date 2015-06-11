@@ -119,7 +119,7 @@ class Routes extends Admin {
 
 	protected function datatable()
 	{
-		return Table::table()->addColumn('Name', 'Code', 'From', 'Destination', 'Category','Price', 'Action')
+		return Table::table()->addColumn('Name', 'Code', 'From', 'Destination', 'Category','Price', 'Durations', 'Action')
 							 ->setUrl(route('api.datatable.routes.index'))
 							 ->noScript();
 	}

@@ -14,6 +14,8 @@
 
                           {{Helpers::link_to('admin.master.drivers.edit', '<i class="icon icon-pencil"></i>', ['drivers' => $driver->id],['class' => 'btn btn-default new-modal-form', 'data-target' => 'modal-edit-driver-'.$driver->id ])}}
 
+                          {{Helpers::link_to('admin.master.drivers.edit_stationed_at', '<i class="icon icon-screenshot"></i>', ['drivers' => $driver->id],['class' => 'btn btn-default new-modal-form', 'data-target' => 'modal-edit-stationed-driver-'.$driver->id, 'data-form-url' => route('admin.master.drivers.stationed_at', array('drivers' => $driver->id)) ])}}
+
                       </div>
                   </div>
               </div>

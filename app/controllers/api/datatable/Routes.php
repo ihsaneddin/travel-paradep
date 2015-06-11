@@ -39,6 +39,9 @@ class Routes extends Api {
 	        ->addColumn('price', function($route){
         		return '<span class="price">'.$route->price.'</span>';
 	        })
+	       	->addColumn('durations', function($route){
+        		return '<span class="duration">'.$route->duration.'</span>';
+	        })
 	        ->addColumn('action', function($route){
 	        	$str = '<div class="btn-group action">
                     		<a href="'.route('admin.master.routes.edit', ['routes' => $route->id]).'" class="btn btn-default btn-xs new-modal-form"  data-target="modal-edit-route-'.$route->id.'""><i class="icon icon-pencil"></i></a>

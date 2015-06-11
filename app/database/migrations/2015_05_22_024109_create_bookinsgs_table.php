@@ -20,6 +20,7 @@ class CreateBookinsgsTable extends Migration {
 			$table->string('code');
 			$table->integer('seat_no')->unsigned();
 			$table->boolean('paid')->default(false);
+			$table->string('state', 15)->nullable();
 			$table->timestamps();
 		});
 	}

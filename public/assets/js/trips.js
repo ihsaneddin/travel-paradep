@@ -12,24 +12,6 @@ function change_select_trip_options(chosen, update)
   }
 }
 
-function update_button_selected(chosen)
-{
-  var tr = chosen.parents('tr'),
-      tbody = chosen.parents('tbody'),
-      i = chosen.find('i');
-  tbody.find('tr').removeClass('warning');
-  tbody.find('.select-trip-option').find('i').each(function(){
-    if ($(this).hasClass('icon-ok'))
-    {
-      $(this).removeClass('icon-ok');
-      $(this).addClass('icon-check');
-    }
-  });
-  i.removeClass('icon-check');
-  i.addClass('icon-ok');
-  tr.addClass('warning');
-}
-
 function update_trip_per(element)
 {
   var url = element.data('url'),

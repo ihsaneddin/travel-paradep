@@ -44,6 +44,9 @@
                             <li>
                                 {{Helpers::link_to('admin.process.trips.index', '<i class="icon-plane icon"></i> <span>Trips</span>', [], [])}}
                             </li>
+                            <li>
+                                {{Helpers::link_to('admin.process.schedules.index', '<i class="icon-list icon"></i> <span>Schedules</span>', [], [])}}
+                            </li>
                         </ul>
                     </div>
 
@@ -70,6 +73,9 @@
                             </li>
                             <li>
                                 {{Helpers::link_to('admin.master.routes.index', '<i class="icon-tasks icon"></i> <span>Routes</span>', [], [])}}
+                            </li>
+                            <li>
+                                {{Helpers::link_to('admin.master.schedules.index', '<i class="icon-list icon"></i> <span>Schedules</span>', [], [])}}
                             </li>
                         </ul>
                     </div>

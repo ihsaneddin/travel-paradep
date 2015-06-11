@@ -29,7 +29,7 @@
 
         @if (is_null($trip->id))
           <div id="trip-select-route" class="tab-pane active">
-            @include('admin.process.trips.routes_list', array('trip' => $trip, 'options' => $options))
+            @include('admin.process.trips.routes_list', array('resource' => $trip, 'options' => $options))
           </div>
         @endif
 

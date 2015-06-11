@@ -50,6 +50,11 @@ class User extends Eloquent implements ConfideUserInterface, StaplerableInterfac
 		parent::__construct($attributes);
 	}
 
+	public function station()
+	{
+		return $this->belongsTo('Station');
+	}
+
 	public function roles()
 	{
 		return $this->belongsToMany('Role', 'users_roles');
@@ -97,7 +102,8 @@ class User extends Eloquent implements ConfideUserInterface, StaplerableInterfac
 	{
 		return $res->leftJoin('users_roles', 'users.id', '=', 'users_roles.user_id')
 			       ->leftJoin('roles', 'roles.id', '=', 'users_roles.role_id')
-			       ->select('users.id', 'username', 'email', 'last_login', 'users_roles.user_id', 'users_roles.role_id', 'roles.name', 'users.updated_at')
+			       ->leftJoin('stations', 'users.station_id', '=', 'stations.id')
+			       ->select('users.id', 'stations.name' , 'users.station_id','username', 'email', 'last_login', 'users_roles.user_id', 'users_roles.role_id', 'roles.name', 'users.updated_at')
 			       ->where('roles.name', '<>', 'super_admin')->orderBy('users.updated_at', 'ASC');
 	}
 
